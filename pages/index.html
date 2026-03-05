@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Application</title>
+    <style>
+        /* Estilos generales para centrar la tarjeta y dar el fondo limpio */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff; /* Fondo blanco puro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Contenedor principal estilo tarjeta */
+        .card {
+            background-color: #f2f2f2; /* Gris muy claro igual a la referencia */
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 30px;
+            width: 420px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        /* Estilos comunes para inputs, select y textarea */
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fafafa;
+            color: #333;
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Contenedor horizontal para el Portfolio */
+        .portfolio-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .portfolio-group input[type="text"] {
+            flex: 1; /* Ocupa el espacio restante */
+        }
+
+        .upload-btn {
+            background-color: #e9e9e9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            color: #555;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .upload-btn:hover {
+            background-color: #ddd;
+        }
+
+        /* Botón principal */
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background-color: #d9d9d9;
+            border: 1px solid #c0c0c0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #444;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #cccccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="title">Vendor Application</div>
+        
+        <div class="form-group">
+            <label>Service Description</label>
+            <textarea placeholder="Introduce el texto..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Service Category</label>
+            <select>
+                <option value="" disabled selected>Select a category...</option>
+                <option value="food">Food & Beverage</option>
+                <option value="merch">Merchandise</option>
+                <option value="service">Services</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Portfolio</label>
+            <div class="portfolio-group">
+                <input type="text" placeholder="Portfolio link">
+                <div class="upload-btn">Upload Files</div>
+                <div class="upload-btn">Upload Files</div>
+            </div>
+        </div>
+
+        <button class="submit-btn">Submit Application</button>
+    </div>
+
+</body>
+</html>
