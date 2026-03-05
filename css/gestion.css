@@ -1,0 +1,208 @@
+/* =============================================
+   Gestión del Perfil de Proveedor — Estilos
+   ============================================= */
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Body */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ebebeb;
+  font-family: 'DM Sans', sans-serif;
+  padding: 2rem;
+}
+
+/* Tarjeta principal */
+.card {
+  background: #f5f4f2;
+  border-radius: 18px;
+  padding: 2.8rem 3rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.07);
+}
+
+/* Título */
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 2rem;
+}
+
+/* --- Etiquetas de sección --- */
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin-bottom: 0.6rem;
+  margin-top: 1.6rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.section-label span {
+  font-weight: 300;
+  font-size: 0.68rem;
+  color: #888;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+/* --- Inputs --- */
+textarea,
+input[type="text"] {
+  width: 100%;
+  background: #eceae6;
+  border: 1px solid #d8d5cf;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea {
+  padding: 0.85rem 1rem;
+  resize: vertical;
+  min-height: 110px;
+}
+
+input[type="text"] {
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+}
+
+textarea::placeholder,
+input[type="text"]::placeholder {
+  color: #aaa;
+}
+
+textarea:focus,
+input[type="text"]:focus {
+  border-color: #a0998c;
+  box-shadow: 0 0 0 3px rgba(160, 153, 140, 0.15);
+}
+
+/* --- Grid de redes sociales --- */
+.social-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.input-icon-wrap {
+  position: relative;
+}
+
+.input-icon-wrap .icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-wrap .icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --- Galería --- */
+.gallery-section {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gallery-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.gallery-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #d0cdc7;
+}
+
+/* --- Botones --- */
+.btn-add-photo {
+  background: #e4e1da;
+  border: 1.5px dashed #bab5ac;
+  color: #666;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.7rem 2.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-add-photo:hover {
+  background: #dbd8d0;
+  border-color: #a09990;
+}
+
+.btn-save {
+  margin-top: 2rem;
+  width: 100%;
+  background: #ccc9c2;
+  border: none;
+  border-radius: 100px;
+  color: #3a3a3a;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.btn-save:hover {
+  background: #b5b1a8;
+  color: #1a1a1a;
+  transform: translateY(-1px);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+/* Divisor */
+.divider {
+  height: 1px;
+  background: #dbd8d2;
+  margin: 1.8rem 0 0;
+}
