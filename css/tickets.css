@@ -1,0 +1,304 @@
+/* ===============================
+   RESET GENERAL
+================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: #06070b;
+  color: white;
+}
+
+/* ===============================
+   LOGIN (NEON STYLE)
+================================= */
+
+.auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background:
+    radial-gradient(1200px 600px at 50% 20%, rgba(0, 180, 255, .18), transparent 55%),
+    radial-gradient(900px 500px at 20% 85%, rgba(170, 0, 255, .12), transparent 60%),
+    radial-gradient(700px 450px at 90% 80%, rgba(0, 255, 200, .10), transparent 55%),
+    #06070b;
+}
+
+.auth-card {
+  width: 420px;
+  padding: 40px 35px;
+  border-radius: 20px;
+  background: rgba(15, 18, 28, 0.75);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  box-shadow:
+    0 0 60px rgba(0, 210, 255, 0.15),
+    0 0 120px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  color: white;
+}
+
+.auth-subtitle {
+  font-size: 12px;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 25px;
+}
+
+.auth-h1 {
+  margin-bottom: 20px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,210,255,0.4);
+  background: rgba(10, 12, 18, 0.6);
+  color: white;
+  outline: none;
+  transition: 0.3s;
+}
+
+.auth-input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+.auth-input:focus {
+  border-color: #00d4ff;
+  box-shadow: 0 0 10px rgba(0,210,255,0.5);
+}
+
+.auth-btn {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(90deg, #00e5ff, #007bff);
+  color: black;
+  transition: 0.3s;
+}
+
+.auth-btn:hover {
+  box-shadow: 0 0 20px rgba(0,210,255,0.6);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+
+.auth-divider span {
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+.auth-social {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-social-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(15, 18, 28, 0.6);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.auth-social-btn:hover {
+  border-color: #00d4ff;
+  box-shadow: 0 0 10px rgba(0,210,255,0.4);
+}
+
+.auth-footer {
+  margin-top: 15px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+.auth-footer a {
+  color: #00d4ff;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   DASHBOARD (MY TICKETS)
+================================= */
+
+.dashboard {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  background:
+    radial-gradient(1200px 600px at 50% 20%, rgba(0, 180, 255, .15), transparent 55%),
+    radial-gradient(900px 500px at 20% 85%, rgba(170, 0, 255, .12), transparent 60%),
+    radial-gradient(700px 450px at 90% 80%, rgba(0, 255, 200, .10), transparent 55%),
+    #06070b;
+}
+
+.dashboard-card {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  background: rgba(15, 18, 28, 0.95);
+}
+
+/* Sidebar */
+
+.sidebar {
+  width: 300px;
+  padding: 40px 30px;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.sidebar-btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,210,255,0.2);
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar-btn.active,
+.sidebar-btn:hover {
+  background: rgba(0,210,255,0.2);
+}
+
+.mini-ticket {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 15px;
+  background: rgba(20, 25, 40, 0.7);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mini-content {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.mini-img {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(45deg, #00d4ff, #7b00ff);
+  border-radius: 8px;
+}
+
+/* Content */
+
+.content {
+  flex: 1;
+  padding: 60px;
+}
+
+.ticket-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  background: rgba(20, 25, 40, 0.8);
+  border: 1px solid rgba(0,210,255,0.3);
+  box-shadow: 0 0 20px rgba(0,210,255,0.1);
+}
+
+.ticket-img {
+  width: 100px;
+  height: 80px;
+  background: linear-gradient(45deg, #00d4ff, #7b00ff);
+  border-radius: 10px;
+}
+
+.cancel-btn {
+  margin-left: auto;
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(45deg, #ff4d4d, #ff0000);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cancel-btn:hover {
+  box-shadow: 0 0 15px rgba(255,0,0,0.6);
+}
+
+/* Profile */
+
+.profile-panel {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #00d4ff, #7b00ff);
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-form input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,210,255,0.3);
+  background: transparent;
+  color: white;
+}
+
+.save-btn {
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(45deg, #00e5ff, #007bff);
+  color: black;
+  cursor: pointer;
+}
