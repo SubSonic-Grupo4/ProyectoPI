@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subsonic - Listado de Eventos</title>
+    <!-- Use FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/visitante.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fa-solid fa-music"></i> Subsonic
+        </div>
+        <nav class="nav-links">
+            <a href="#">Entradas</a>
+            <a href="#">Fechas</a>
+            <a href="#">Info</a>
+        </nav>
+        <div class="auth-buttons">
+            <a href="#" class="btn btn-outline">Login</a>
+            <a href="#" class="btn btn-dark">Registro</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-pill">marzo - noviembre</div>
+            <h1 class="hero-title">
+                SUBSONIC<br>
+                <span>FESTIVAL</span>
+            </h1>
+            <p class="hero-subtitle">El festival de música electrónica más esperado del año.</p>
+            <button class="btn btn-dark">
+                <i class="fa-solid fa-ticket"></i> Comprar Abonos
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label for="desde">Desde</label>
+                <input type="date" id="desde" value="2026-08-07">
+            </div>
+            <div class="filter-group">
+                <label for="hasta">Hasta</label>
+                <input type="date" id="hasta" value="2026-09-08">
+            </div>
+            <div class="filter-group">
+                <label for="genero">Género</label>
+                <select id="genero">
+                    <option value="todos">Todos</option>
+                    <option value="techno">Techno</option>
+                    <option value="house">House</option>
+                    <option value="melodic">Melodic Techno</option>
+                </select>
+            </div>
+            <div class="filter-group" style="flex: 0 0 auto; justify-content: flex-end;">
+                <button class="btn btn-dark btn-search">
+                    <i class="fa-solid fa-magnifying-glass"></i> Buscar Eventos
+                </button>
+            </div>
+        </div>
+
+        <!-- Event List Container -->
+        <div class="events-header">
+            <h2>Próximos Eventos</h2>
+            <p>Descubre los mejores artistas de música electrónica</p>
+        </div>
+
+        <div class="events-grid">
+            <!-- Event Card 1 -->
+            <div class="event-card">
+                <div class="card-image">
+                    <span class="genre-tag">Techno</span>
+                </div>
+                <div class="card-content">
+                    <h3>Charlotte de Witte</h3>
+                    <div class="event-info">
+                        <i class="fa-regular fa-calendar"></i> Viernes 7 Marzo, 22:00
+                    </div>
+                    <div class="event-info">
+                        <i class="fa-solid fa-location-dot"></i> Main Stage
+                    </div>
+                </div>
+                <div class="card-action">
+                    <!-- Parámetro de ID_Evento para navegar al detalle -->
+                    <a href="ticket-detail.html?id=1" class="btn btn-outline btn-block">Ver detalles &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Event Card 2 -->
+            <div class="event-card">
+                <div class="card-image">
+                    <span class="genre-tag">Techno</span>
+                </div>
+                <div class="card-content">
+                    <h3>Adam Beyer</h3>
+                    <div class="event-info">
+                        <i class="fa-regular fa-calendar"></i> Viernes 7 Marzo, 23:30
+                    </div>
+                    <div class="event-info">
+                        <i class="fa-solid fa-location-dot"></i> Neon Arena
+                    </div>
+                </div>
+                <div class="card-action">
+                    <a href="ticket-detail.html?id=2" class="btn btn-outline btn-block">Ver detalles &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Event Card 3 -->
+            <div class="event-card">
+                <div class="card-image">
+                    <span class="genre-tag">House</span>
+                </div>
+                <div class="card-content">
+                    <h3>Nina Kraviz</h3>
+                    <div class="event-info">
+                        <i class="fa-regular fa-calendar"></i> Sábado 8 Marzo, 20:00
+                    </div>
+                    <div class="event-info">
+                        <i class="fa-solid fa-location-dot"></i> Cyber Dome
+                    </div>
+                </div>
+                <div class="card-action">
+                    <a href="ticket-detail.html?id=3" class="btn btn-outline btn-block">Ver detalles &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Event Card 4 -->
+            <div class="event-card">
+                <div class="card-image">
+                    <span class="genre-tag">Melodic Techno</span>
+                </div>
+                <div class="card-content">
+                    <h3>Tale Of Us</h3>
+                    <div class="event-info">
+                        <i class="fa-regular fa-calendar"></i> Sábado 8 Marzo, 22:30
+                    </div>
+                    <div class="event-info">
+                        <i class="fa-solid fa-location-dot"></i> Main Stage
+                    </div>
+                </div>
+                <div class="card-action">
+                    <a href="ticket-detail.html?id=4" class="btn btn-outline btn-block">Ver detalles &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
