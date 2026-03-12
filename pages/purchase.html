@@ -19,33 +19,32 @@
         <div class="ticket-img"></div>
 
         <div class="ticket-info">
-          <h3>Subsonic Main Stage</h3>
-          <p>12 Julio 2026</p>
+          <h3 id="eventTitle">Subsonic Main Stage</h3>
+          <p id="eventDate">12 Julio 2026</p>
         </div>
       </div>
 
       <div class="profile-form" style="max-width:400px; margin-top:30px;">
+        <label>Selecciona Evento</label>
+        <select id="eventSelect"></select>
+
         <label>Selecciona Pase</label>
-        <select>
-          <option>Pase General - 49€</option>
-          <option>Pase VIP - 89€</option>
-          <option>Full Experience - 129€</option>
-        </select>
+        <select id="passSelect"></select>
 
         <label>Cantidad</label>
-        <select>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-        </select>
+        <select id="qtySelect"></select>
 
-        <button class="save-btn">Confirmar Compra</button>
+        <button class="save-btn" id="confirmPurchaseBtn" type="button">Confirmar Compra</button>
       </div>
 
     </section>
 
   </div>
 </main>
+
+<!-- Scripts -->
+<script src="../js/data.js"></script>
+<script src="../js/purchase.js"></script>
 
 </body>
 </html>

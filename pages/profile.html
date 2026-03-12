@@ -9,7 +9,6 @@
 <body>
 
 <div class="profile-container">
-
   <div class="profile-card">
 
     <h1>Mi Perfil</h1>
@@ -23,33 +22,19 @@
 
     <!-- Formulario -->
     <div class="profile-form">
-      <input type="text" placeholder="Nombre completo">
-      <input type="email" placeholder="Email">
-      <input type="text" placeholder="Dirección">
+      <input id="profileName" type="text" placeholder="Nombre completo">
+      <input id="profileEmail" type="email" placeholder="Email">
+      <input id="profileAddress" type="text" placeholder="Dirección">
 
-      <button>Guardar Cambios</button>
+      <button id="saveProfileBtn" type="button">Guardar Cambios</button>
     </div>
 
   </div>
-
 </div>
 
-<script>
-  // Vista previa de imagen (opcional pero queda profesional)
-  const upload = document.getElementById("imageUpload");
-  const image = document.getElementById("profileImage");
-
-  upload.addEventListener("change", function() {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        image.src = e.target.result;
-      }
-      reader.readAsDataURL(file);
-    }
-  });
-</script>
+<!-- Scripts -->
+<script src="../js/data.js"></script>
+<script src="../js/profile.js"></script>
 
 </body>
 </html>

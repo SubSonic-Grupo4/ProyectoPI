@@ -24,9 +24,9 @@
       <div class="hero-left">
         <div class="event-image"></div>
         <div class="event-meta">
-          <h2>Subsonic Main Stage</h2>
-          <p>Madrid · 12 Julio 2026</p>
-          <span class="badge badge--active">Activa</span>
+          <h2 id="eventName">Subsonic Main Stage</h2>
+          <p id="eventMeta">Madrid · 12 Julio 2026</p>
+          <span id="statusBadge" class="badge badge--active">Activa</span>
         </div>
       </div>
 
@@ -41,32 +41,36 @@
     <div class="ticket-grid">
       <div class="info-box">
         <p class="label">Ticket ID</p>
-        <p class="value">#T-1023</p>
+        <p class="value" id="ticketIdValue">#T-1023</p>
       </div>
 
       <div class="info-box">
         <p class="label">Pase</p>
-        <p class="value">VIP Lounge</p>
+        <p class="value" id="passValue">VIP Lounge</p>
       </div>
 
       <div class="info-box">
         <p class="label">Precio</p>
-        <p class="value">89€</p>
+        <p class="value" id="priceValue">89€</p>
       </div>
 
       <div class="info-box">
         <p class="label">Titular</p>
-        <p class="value">Nombre Apellidos</p>
+        <p class="value" id="holderValue">Nombre Apellidos</p>
       </div>
     </div>
 
     <footer class="detail-actions">
-      <button class="danger-btn" type="button">Cancelar Entrada</button>
+      <button class="danger-btn" id="cancelBtn" type="button">Cancelar Entrada</button>
       <button class="secondary-btn" type="button">Descargar PDF (simulado)</button>
     </footer>
 
   </section>
 </main>
+
+<!-- Scripts -->
+<script src="../js/data.js"></script>
+<script src="../js/detail.js"></script>
 
 </body>
 </html>
