@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subsonic Analytics - Basic</title>
+    <link rel="stylesheet" href="estadisticasProveedorEstilo.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="main-header">
+            <div class="brand">
+                <h1>SUBSONIC ANALYTICS</h1>
+                <span>DASHBOARD | LIVE VENDOR PORTAL</span>
+            </div>
+            <div class="timestamp" id="live-clock">Oct 26, 2024 | 21:34:58</div>
+        </header>
+
+        <div class="main-layout">
+            <section class="primary-content">
+                <div class="top-stats">
+                    <div class="stat-group">
+                        <span class="label">TOTAL SALES</span>
+                        <div class="value">$4,230.75 <small>💵</small></div>
+                    </div>
+                    <div class="stat-group">
+                        <span class="label">PLAYS</span>
+                        <div class="value">12.5k <small>📊</small></div>
+                    </div>
+                    <div class="filter-tag">All Time</div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>CONTENT PLAYS OVER TIME</h2>
+                        <span class="peak-badge">Peak: 14.8k Plays at 21:00</span>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="playsChart"></canvas>
+                        <div class="timeline-labels">
+                            <span>0H</span>
+                            <span>24H</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="side-widgets">
+                <div class="widget card">
+                    <h3>BOOTH RESERVATIONS</h3>
+                    <div class="progress-circle">
+                        <div class="circle-content">
+                            <strong>78% FILLED</strong>
+                            <span>(187/240)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget card">
+                    <h3>LIVE FEED</h3>
+                    <p class="feed-item">21:32 NEW TICKET SALE: VENDOR 8</p>
+                </div>
+
+                <button class="btn-refresh" onclick="location.reload()">REFRESH</button>
+            </aside>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
