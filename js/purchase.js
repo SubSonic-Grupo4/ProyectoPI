@@ -1,90 +1,127 @@
-// js/purchase.js
+const API_BASE_URL = "";
+
+let eventsData = [];
+let passesData = [];
 
 function fillSelect(selectEl, optionsHtml) {
   selectEl.innerHTML = optionsHtml;
 }
 
-function renderPurchase() {
+function renderOptions() {
   const eventSelect = document.getElementById("eventSelect");
   const passSelect = document.getElementById("passSelect");
   const qtySelect = document.getElementById("qtySelect");
-  const confirmBtn = document.getElementById("confirmPurchaseBtn");
-
   const eventTitle = document.getElementById("eventTitle");
   const eventDate = document.getElementById("eventDate");
 
-  if (!eventSelect || !passSelect || !qtySelect || !confirmBtn) return;
+  if (!eventSelect || !passSelect || !qtySelect) return;
 
-  // Si en tu data.js NO tienes events/passes, los creamos aquí por seguridad
-  const data = window.SubsonicData;
+  fillSelect(
+    eventSelect,
+    eventsData.map(eventItem =>
+      `<option value="${eventItem.eventId}">${eventItem.name} - ${eventItem.date}</option>`
+    ).join("")
+  );
 
-  if (!data.events) {
-    data.events = [
-      { eventId: "E-101", name: "Subsonic Main Stage", date: "12/07/2026" },
-      { eventId: "E-202", name: "Subsonic Underground", date: "20/07/2026" }
-    ];
-  }
+  fillSelect(
+    passSelect,
+    passesData.map(passItem =>
+      `<option value="${passItem.passId}">${passItem.label} - ${passItem.price} EUR</option>`
+    ).join("")
+  );
 
-  if (!data.passes) {
-    data.passes = [
-      { passId: "P-GEN", label: "Pase General", price: 49 },
-      { passId: "P-VIP", label: "Pase VIP", price: 89 },
-      { passId: "P-FULL", label: "Full Experience", price: 129 }
-    ];
-  }
+  fillSelect(
+    qtySelect,
+    [1, 2, 3, 4].map(number => `<option value="${number}">${number}</option>`).join("")
+  );
 
-  // Rellenar evento
-  fillSelect(eventSelect, data.events.map(e =>
-    `<option value="${e.eventId}">${e.name} - ${e.date}</option>`
-  ).join(""));
-
-  // Rellenar pase
-  fillSelect(passSelect, data.passes.map(p =>
-    `<option value="${p.passId}">${p.label} - ${p.price}€</option>`
-  ).join(""));
-
-  // Rellenar cantidad
-  fillSelect(qtySelect, [1,2,3,4].map(n =>
-    `<option value="${n}">${n}</option>`
-  ).join(""));
-
-  // Actualiza título/fecha visual según el evento seleccionado
   function updateEventPreview() {
-    const selected = data.events.find(e => e.eventId === eventSelect.value);
+    const selected = eventsData.find(eventItem => eventItem.eventId === eventSelect.value);
     if (!selected) return;
+
     if (eventTitle) eventTitle.textContent = selected.name;
     if (eventDate) eventDate.textContent = selected.date;
   }
 
   eventSelect.addEventListener("change", updateEventPreview);
   updateEventPreview();
+}
 
-  // Confirmar compra (simulada)
-  confirmBtn.addEventListener("click", () => {
-    const selectedEvent = data.events.find(e => e.eventId === eventSelect.value);
-    const selectedPass = data.passes.find(p => p.passId === passSelect.value);
-    const qty = parseInt(qtySelect.value, 10) || 1;
+async function loadPurchaseOptions() {
+  const response = await fetch(`${API_BASE_URL}/purchase/options`);
 
-    if (!selectedEvent || !selectedPass) return;
+  if (!response.ok) {
+    throw new Error("No se pudieron cargar las opciones de compra");
+  }
 
-    // Crear X tickets
-    for (let i = 0; i < qty; i++) {
-      const newId = `T-${Math.floor(1000 + Math.random() * 9000)}`;
+  const data = await response.json();
+  eventsData = data.events || [];
+  passesData = data.passes || [];
+}
 
-      // Mantengo el formato que usas en tickets (eventName, dateLabel, passType, status)
-      data.tickets.push({
-        ticketId: newId,
-        eventName: selectedEvent.name,
-        dateLabel: selectedEvent.date,
-        monthDay: "NEW",            // opcional
-        passType: selectedPass.label.replace("Pase ", ""), // para que quede "VIP" o "General"
-        status: "Activa"
-      });
+function attachPurchaseHandler() {
+  const eventSelect = document.getElementById("eventSelect");
+  const passSelect = document.getElementById("passSelect");
+  const qtySelect = document.getElementById("qtySelect");
+  const confirmBtn = document.getElementById("confirmPurchaseBtn");
+
+  if (!eventSelect || !passSelect || !qtySelect || !confirmBtn) return;
+
+  confirmBtn.addEventListener("click", async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      alert("Debes iniciar sesion primero");
+      window.location.href = "./login.html";
+      return;
     }
 
-    // Ir a Mis Entradas
-    window.location.href = "./tickets.html";
+    const selectedEvent = eventsData.find(eventItem => eventItem.eventId === eventSelect.value);
+    const selectedPass = passesData.find(passItem => passItem.passId === passSelect.value);
+    const qty = parseInt(qtySelect.value, 10) || 1;
+
+    if (!selectedEvent || !selectedPass) {
+      alert("Debes seleccionar un evento y un pase");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/purchase`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id_usuario: user.id_usuario,
+          eventName: selectedEvent.name,
+          dateLabel: selectedEvent.date,
+          passType: selectedPass.label,
+          quantity: qty
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("No se pudo completar la compra");
+      }
+
+      alert("Compra realizada correctamente");
+      window.location.href = "./tickets.html";
+    } catch (error) {
+      console.error("Error en la compra:", error);
+      alert("Error al realizar la compra");
+    }
   });
 }
 
-document.addEventListener("DOMContentLoaded", renderPurchase);
+async function initPurchase() {
+  try {
+    await loadPurchaseOptions();
+    renderOptions();
+    attachPurchaseHandler();
+  } catch (error) {
+    console.error("Error cargando opciones de compra:", error);
+    alert("Error cargando las opciones de compra");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initPurchase);

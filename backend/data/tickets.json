@@ -1,0 +1,20 @@
+[
+    {
+        "ticketId": "T-1001",
+        "eventName": "Subsonic Main Stage",
+        "dateLabel": "10/12/2024",
+        "monthDay": "NOV 12",
+        "passType": "VIP Lounge",
+        "status": "Cancelada",
+        "id_usuario": "U-001"
+    },
+    {
+        "ticketId": "T-1002",
+        "eventName": "Subsonic Underground",
+        "dateLabel": "15/01/2025",
+        "monthDay": "JAN 15",
+        "passType": "General",
+        "status": "Cancelada",
+        "id_usuario": "U-001"
+    }
+]

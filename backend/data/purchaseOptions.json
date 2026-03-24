@@ -1,0 +1,31 @@
+{
+    "events": [
+        {
+            "eventId": "E-101",
+            "name": "Subsonic Main Stage",
+            "date": "12/07/2026"
+        },
+        {
+            "eventId": "E-202",
+            "name": "Subsonic Underground",
+            "date": "20/07/2026"
+        }
+    ],
+    "passes": [
+        {
+            "passId": "P-GEN",
+            "label": "Pase General",
+            "price": 49
+        },
+        {
+            "passId": "P-VIP",
+            "label": "Pase VIP",
+            "price": 89
+        },
+        {
+            "passId": "P-FULL",
+            "label": "Full Experience",
+            "price": 129
+        }
+    ]
+}

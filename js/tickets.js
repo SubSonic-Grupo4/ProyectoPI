@@ -1,10 +1,44 @@
-// js/tickets.js
+const API_BASE_URL = "";
+
+let currentTickets = [];
+
+function getStoredUser() {
+  return JSON.parse(localStorage.getItem("user"));
+}
+
+function saveStoredUser(user) {
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
+async function loadTickets() {
+  const user = getStoredUser();
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/tickets/${user.id_usuario}`);
+
+    if (!response.ok) {
+      throw new Error("No se pudieron cargar los tickets");
+    }
+
+    currentTickets = await response.json();
+
+    renderMiniTickets();
+    renderBigTickets();
+  } catch (error) {
+    console.error("Error cargando tickets:", error);
+  }
+}
 
 function renderMiniTickets() {
   const miniWrap = document.getElementById("miniTickets");
   if (!miniWrap) return;
 
-  miniWrap.innerHTML = window.SubsonicData.tickets.map(t => `
+  miniWrap.innerHTML = currentTickets.map(t => `
     <div class="mini-ticket" data-ticket-id="${t.ticketId}">
       <div class="mini-content">
         <div class="mini-img"></div>
@@ -13,7 +47,9 @@ function renderMiniTickets() {
           <span>${t.monthDay}</span>
         </div>
       </div>
-      <button class="cancel-btn" type="button" data-action="cancel" data-ticket-id="${t.ticketId}">Cancel</button>
+      <button class="cancel-btn" type="button" data-action="cancel" data-ticket-id="${t.ticketId}">
+        Cancel
+      </button>
     </div>
   `).join("");
 }
@@ -22,14 +58,16 @@ function renderBigTickets() {
   const list = document.getElementById("ticketsList");
   if (!list) return;
 
-  list.innerHTML = window.SubsonicData.tickets.map(t => `
+  list.innerHTML = currentTickets.map(t => `
     <div class="ticket-card">
       <div class="ticket-img"></div>
       <div class="ticket-info">
         <h3>${t.eventName}</h3>
         <p>${t.dateLabel}</p>
         <span>${t.passType}</span>
-        <p style="opacity:.75; margin-top:6px;">ID: #${t.ticketId} · Estado: ${t.status}</p>
+        <p style="opacity:.75; margin-top:6px;">
+          ID: #${t.ticketId} - Estado: ${t.status}
+        </p>
       </div>
       <a class="cancel-btn"
          style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"
@@ -40,20 +78,65 @@ function renderBigTickets() {
   `).join("");
 }
 
-function renderProfilePanel() {
-  const user = window.SubsonicData.currentUser;
-
+function renderProfilePanel(user) {
   const nameInput = document.getElementById("nameInput");
   const emailInput = document.getElementById("emailInput");
   const avatarBox = document.getElementById("avatarBox");
 
-  if (nameInput) nameInput.value = user.name;
-  if (emailInput) emailInput.value = user.email;
-  if (avatarBox) avatarBox.style.background = user.avatarColor;
+  if (nameInput) nameInput.value = user.name || "";
+  if (emailInput) emailInput.value = user.email || "";
+
+  if (avatarBox) {
+    avatarBox.style.background = user.avatarColor || "";
+    avatarBox.style.backgroundImage = "";
+
+    if (user.avatarUrl) {
+      avatarBox.style.backgroundImage = `url(${user.avatarUrl})`;
+      avatarBox.style.backgroundSize = "cover";
+      avatarBox.style.backgroundPosition = "center";
+    }
+  }
+}
+
+async function loadUserProfilePanel() {
+  const user = getStoredUser();
+  if (!user) return;
+
+  renderProfilePanel(user);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/profile/${user.id_usuario}`);
+
+    if (!response.ok) {
+      throw new Error("No se pudo cargar el perfil");
+    }
+
+    const profile = await response.json();
+    saveStoredUser(profile);
+    renderProfilePanel(profile);
+  } catch (error) {
+    console.error("Error cargando perfil:", error);
+  }
+}
+
+async function cancelTicket(ticketId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/ticket/cancel/${ticketId}`, {
+      method: "PUT"
+    });
+
+    if (!response.ok) {
+      throw new Error("No se pudo cancelar la entrada");
+    }
+
+    await loadTickets();
+  } catch (error) {
+    console.error("Error cancelando ticket:", error);
+    alert("Error al cancelar la entrada");
+  }
 }
 
 function attachHandlers() {
-  // Ir a perfil completo
   const goProfile = document.getElementById("goProfile");
   if (goProfile) {
     goProfile.addEventListener("click", () => {
@@ -61,40 +144,63 @@ function attachHandlers() {
     });
   }
 
-  // Guardado simulado del panel
   const saveBtn = document.getElementById("saveProfileBtn");
   if (saveBtn) {
-    saveBtn.addEventListener("click", () => {
+    saveBtn.addEventListener("click", async () => {
+      const user = getStoredUser();
+
+      if (!user) {
+        window.location.href = "./login.html";
+        return;
+      }
+
       const nameInput = document.getElementById("nameInput");
       const emailInput = document.getElementById("emailInput");
 
-      if (nameInput) window.SubsonicData.currentUser.name = nameInput.value;
-      if (emailInput) window.SubsonicData.currentUser.email = emailInput.value;
+      try {
+        const response = await fetch(`${API_BASE_URL}/profile/${user.id_usuario}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: nameInput ? nameInput.value : "",
+            email: emailInput ? emailInput.value : "",
+            address: user.address || "",
+            avatarUrl: user.avatarUrl || null
+          })
+        });
 
-      alert("Cambios guardados (simulado).");
+        if (!response.ok) {
+          throw new Error("No se pudo guardar el perfil");
+        }
+
+        const data = await response.json();
+        saveStoredUser(data.user);
+        renderProfilePanel(data.user);
+
+        alert("Cambios guardados correctamente");
+      } catch (error) {
+        console.error("Error guardando perfil:", error);
+        alert("Error al guardar el perfil");
+      }
     });
   }
 
-  // Cancelar desde mini-tickets (simulado)
   const miniWrap = document.getElementById("miniTickets");
   if (miniWrap) {
-    miniWrap.addEventListener("click", (e) => {
-      const btn = e.target.closest('button[data-action="cancel"]');
+    miniWrap.addEventListener("click", (event) => {
+      const btn = event.target.closest('button[data-action="cancel"]');
       if (!btn) return;
 
       const ticketId = btn.getAttribute("data-ticket-id");
-      const ticket = window.SubsonicData.tickets.find(t => t.ticketId === ticketId);
-      if (ticket) ticket.status = "Cancelada";
-
-      renderMiniTickets();
-      renderBigTickets();
+      cancelTicket(ticketId);
     });
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderMiniTickets();
-  renderBigTickets();
-  renderProfilePanel();
+  loadTickets();
+  loadUserProfilePanel();
   attachHandlers();
 });
