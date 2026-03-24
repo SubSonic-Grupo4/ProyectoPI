@@ -18,11 +18,24 @@
 
       <h1 class="auth-h1">Sign In</h1>
 
-      <form class="auth-form">
-        <input class="auth-input" type="email" placeholder="Email Address" />
-        <input class="auth-input" type="password" placeholder="Password" />
+      <form class="auth-form" id="loginForm">
+        <input
+          class="auth-input"
+          id="email"
+          type="email"
+          placeholder="Email Address"
+          required
+        />
 
-        <button class="auth-btn" type="button">Sign In</button>
+        <input
+          class="auth-input"
+          id="password"
+          type="password"
+          placeholder="Password"
+          required
+        />
+
+        <button class="auth-btn" type="submit">Sign In</button>
 
         <div class="auth-divider">
           <span></span>
@@ -45,10 +58,62 @@
           Don’t have an account?
           <a href="#">Register Now</a>
         </p>
+
+        <p id="loginError" style="color: #ff4d4d; margin-top: 10px; display: none;">
+          Credenciales incorrectas
+        </p>
       </form>
 
     </section>
   </main>
+
+  <script>
+    const API_BASE_URL = "";
+
+    async function loginUser(email, password) {
+      const errorText = document.getElementById("loginError");
+      errorText.style.display = "none";
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Credenciales incorrectas");
+        }
+
+        const data = await response.json();
+
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        window.location.href = "tickets.html";
+      } catch (error) {
+        errorText.style.display = "block";
+      }
+    }
+
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      window.location.href = "tickets.html";
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      loginUser(email, password);
+    });
+  </script>
 
 </body>
 </html>
