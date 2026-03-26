@@ -3,7 +3,7 @@
         "id_usuario": "U-001",
         "rol": "Cliente",
         "name": "Nico",
-        "email": "nombre@correo.com",
+        "email": "nombre@unex.es",
         "password": "1234",
         "address": "Calle Ejemplo 123, Madrid",
         "avatarUrl": "https://i.pravatar.cc/150?img=12"

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>My Tickets - Subsonic</title>
-  <link rel="stylesheet" href="../css/tickets.css" />
+  <link rel="stylesheet" href="../css/tickets.css?v=7" />
 </head>
 <body>
 
@@ -14,6 +14,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <button class="sidebar-btn active">My Tickets</button>
+      <button class="sidebar-btn" id="goPurchase">Comprar Entradas</button>
       <button class="sidebar-btn" id="goProfile">Account Settings</button>
 
       <!-- AQUÍ SE PINTAN LOS MINI TICKETS -->
@@ -22,7 +23,21 @@
 
     <!-- Main Content -->
     <section class="content">
-      <h1>My Tickets</h1>
+      <div class="content-header">
+        <div>
+          <h1>My Tickets</h1>
+          <p class="content-subtitle">Gestiona tus entradas activas y descubre nuevas experiencias para el festival.</p>
+        </div>
+      </div>
+
+      <div class="purchase-banner">
+        <div class="purchase-copy">
+          <span class="purchase-tag">Subsonic Passes</span>
+          <h2>¿Quieres comprar otra entrada?</h2>
+          <p>Entra en la zona de compra y elige evento, pase y cantidad en cuestión de segundos.</p>
+        </div>
+        <a class="purchase-link" href="./purchase.html?v=7">Comprar Entradas Ahora</a>
+      </div>
 
       <!-- AQUÍ SE PINTAN LOS TICKETS GRANDES -->
       <div id="ticketsList"></div>
@@ -44,7 +59,7 @@
 </main>
 
 <!-- Scripts: primero datos, luego lógica -->
-<script src="../js/tickets.js"></script>
+<script src="../js/tickets.js?v=7"></script>
 
 </body>
 </html>

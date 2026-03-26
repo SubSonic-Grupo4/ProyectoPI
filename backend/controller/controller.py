@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from backend.model.model import Model
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,6 +22,18 @@ app.mount("/js", StaticFiles(directory=BASE_DIR / "js"), name="js")
 app.mount("/css", StaticFiles(directory=BASE_DIR / "css"), name="css")
 
 model = Model()
+
+
+@app.middleware("http")
+async def disable_static_cache(request: Request, call_next):
+    response = await call_next(request)
+
+    if request.url.path.startswith(("/pages/", "/js/", "/css/")):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+
+    return response
 
 
 class LoginRequest(BaseModel):
