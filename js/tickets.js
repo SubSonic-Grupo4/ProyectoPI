@@ -177,7 +177,7 @@ function attachHandlers() {
   const goProfile = document.getElementById("goProfile");
   if (goProfile) {
     goProfile.addEventListener("click", () => {
-      window.location.href = "./profile.html";
+      window.location.href = "./profile.html?v=9";
     });
   }
 
