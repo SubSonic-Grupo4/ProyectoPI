@@ -1,11 +1,65 @@
 [
     {
-        "id_usuario": "U-001",
-        "rol": "Cliente",
-        "name": "Nico",
-        "email": "nombre@unex.es",
-        "password": "1234",
-        "address": "Calle Ejemplo 123, Madrid",
-        "avatarUrl": "https://i.pravatar.cc/150?img=12"
+        "id_usuario": "C-001",
+        "rol": "CLIENTE",
+        "name": "Carlos Fernández",
+        "email": "cliente@subsonic.es",
+        "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+        "address": "Calle Mayor 10, Badajoz",
+        "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+        "businessName": null,
+        "phone": null,
+        "biography": "",
+        "socialLinks": {
+            "facebook": "",
+            "instagram": "",
+            "x": "",
+            "website": ""
+        },
+        "gallery": []
+    },
+    {
+        "id_usuario": "P-001",
+        "rol": "PROVEEDOR",
+        "name": "Laura García",
+        "email": "proveedor@subsonic.es",
+        "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+        "address": "Avenida actualizada 99, Cáceres",
+        "avatarUrl": "https://example.com/avatar.png",
+        "businessName": "Food Trucks SL",
+        "phone": "+34 600 111 222",
+        "biography": "Bio actualizada",
+        "socialLinks": {
+            "facebook": "https://facebook.com/foodtruckssl",
+            "instagram": "https://instagram.com/foodtruckssl",
+            "x": "https://x.com/foodtruckssl",
+            "website": "https://foodtruckssl.example.com"
+        },
+        "gallery": [
+            "https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb",
+            "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+            "https://example.com/gallery-1.jpg"
+        ]
+    },
+    {
+        "id_usuario": "P-002",
+        "rol": "PROVEEDOR",
+        "name": "Admin Subsonic",
+        "email": "admin@subsonic.es",
+        "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+        "address": "Recinto Ferial s/n, Mérida",
+        "avatarUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
+        "businessName": "Merch Central",
+        "phone": "+34 600 333 444",
+        "biography": "Gestión de merchandising oficial y activaciones de marca.",
+        "socialLinks": {
+            "facebook": "",
+            "instagram": "https://instagram.com/merchcentral",
+            "x": "",
+            "website": "https://merchcentral.example.com"
+        },
+        "gallery": [
+            "https://images.unsplash.com/photo-1521572267360-ee0c2909d518"
+        ]
     }
 ]
