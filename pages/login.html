@@ -100,11 +100,6 @@
       }
     }
 
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      window.location.href = "tickets.html";
-    }
-
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
 

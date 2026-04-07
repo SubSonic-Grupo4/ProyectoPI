@@ -25,7 +25,8 @@ async function loadTickets() {
       throw new Error("No se pudieron cargar los tickets");
     }
 
-    currentTickets = await response.json();
+    const tickets = await response.json();
+    currentTickets = tickets.filter(ticket => ticket.status !== "Cancelada");
 
     renderMiniTickets();
     renderBigTickets();
@@ -37,6 +38,18 @@ async function loadTickets() {
 function renderMiniTickets() {
   const miniWrap = document.getElementById("miniTickets");
   if (!miniWrap) return;
+
+  if (currentTickets.length === 0) {
+    miniWrap.innerHTML = `
+      <div class="mini-ticket">
+        <div>
+          <p>No tienes entradas activas</p>
+          <span>Compra una nueva entrada para verla aqui.</span>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   miniWrap.innerHTML = currentTickets.map(t => `
     <div class="mini-ticket" data-ticket-id="${t.ticketId}">
@@ -57,6 +70,23 @@ function renderMiniTickets() {
 function renderBigTickets() {
   const list = document.getElementById("ticketsList");
   if (!list) return;
+
+  if (currentTickets.length === 0) {
+    list.innerHTML = `
+      <div class="ticket-card">
+        <div class="ticket-info">
+          <h3>No tienes entradas activas</h3>
+          <p>Las entradas canceladas ya no se muestran en My Tickets.</p>
+        </div>
+        <a class="cancel-btn"
+           style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"
+           href="./purchase.html">
+          Comprar ahora
+        </a>
+      </div>
+    `;
+    return;
+  }
 
   list.innerHTML = currentTickets.map(t => `
     <div class="ticket-card">
@@ -137,10 +167,17 @@ async function cancelTicket(ticketId) {
 }
 
 function attachHandlers() {
+  const goPurchase = document.getElementById("goPurchase");
+  if (goPurchase) {
+    goPurchase.addEventListener("click", () => {
+      window.location.href = "./purchase.html?v=7";
+    });
+  }
+
   const goProfile = document.getElementById("goProfile");
   if (goProfile) {
     goProfile.addEventListener("click", () => {
-      window.location.href = "./profile.html";
+      window.location.href = "./profile.html?v=9";
     });
   }
 

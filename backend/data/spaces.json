@@ -1,0 +1,38 @@
+[
+    {
+        "idEspacio": "ESP-FOOD-01",
+        "tipo": "FOOD",
+        "tamano": "10x10",
+        "precio": 1200,
+        "disponible": true,
+        "descripcion": "Espacio junto al escenario principal para restauración.",
+        "ubicacion": "Zona F-01"
+    },
+    {
+        "idEspacio": "ESP-FOOD-02",
+        "tipo": "FOOD",
+        "tamano": "15x10",
+        "precio": 1500,
+        "disponible": false,
+        "descripcion": "Espacio premium de restauración con toma eléctrica.",
+        "ubicacion": "Zona F-02"
+    },
+    {
+        "idEspacio": "ESP-MERCH-01",
+        "tipo": "MERCH",
+        "tamano": "8x8",
+        "precio": 900,
+        "disponible": true,
+        "descripcion": "Stand para venta de camisetas y merchandising oficial.",
+        "ubicacion": "Zona M-01"
+    },
+    {
+        "idEspacio": "ESP-ART-01",
+        "tipo": "ART",
+        "tamano": "12x12",
+        "precio": 1100,
+        "disponible": true,
+        "descripcion": "Espacio para ilustradores, diseñadores y artistas visuales.",
+        "ubicacion": "Zona A-01"
+    }
+]
