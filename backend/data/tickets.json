@@ -16,23 +16,5 @@
         "passType": "General",
         "status": "Cancelada",
         "id_usuario": "U-001"
-    },
-    {
-        "ticketId": "T-1003",
-        "eventName": "Subsonic Main Stage",
-        "dateLabel": "12/07/2026",
-        "monthDay": "JUL 12",
-        "passType": "Pase General",
-        "status": "Cancelada",
-        "id_usuario": "U-001"
-    },
-    {
-        "ticketId": "T-1004",
-        "eventName": "Subsonic Main Stage",
-        "dateLabel": "12/07/2026",
-        "monthDay": "JUL 12",
-        "passType": "Pase General",
-        "status": "Cancelada",
-        "id_usuario": "U-001"
     }
 ]

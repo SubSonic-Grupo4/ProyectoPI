@@ -7,6 +7,10 @@ class LocalUserDAO:
         self.connector = LocalConnector()
         self.filename = "users.json"
 
+    def get_all_users(self):
+        data = self.connector.read_json(self.filename)
+        return [UserDTO(**user) for user in data]
+
     def get_user_by_email(self, email):
         users = self.connector.read_json(self.filename)
         for user in users:
@@ -21,35 +25,19 @@ class LocalUserDAO:
                 return UserDTO(**user)
         return None
 
-    def update_provider_profile(self, id_usuario, name, email, address, avatarUrl=None,
-                                businessName=None, phone=None, biography=None, socialLinks=None):
+    def update_user_profile(self, id_usuario, name, email, address, avatarUrl=None):
         users = self.connector.read_json(self.filename)
+
         for user in users:
             if user["id_usuario"] == id_usuario:
                 user["name"] = name
                 user["email"] = email
                 user["address"] = address
-                user["avatarUrl"] = avatarUrl
-                user["businessName"] = businessName
-                user["phone"] = phone
-                user["biography"] = biography or ""
-                user["socialLinks"] = socialLinks or {
-                    "facebook": "",
-                    "instagram": "",
-                    "x": "",
-                    "website": ""
-                }
-                self.connector.write_json(self.filename, users)
-                return UserDTO(**user)
-        return None
 
-    def add_gallery_image(self, id_usuario, image_url):
-        users = self.connector.read_json(self.filename)
-        for user in users:
-            if user["id_usuario"] == id_usuario:
-                gallery = user.get("gallery", [])
-                gallery.append(image_url)
-                user["gallery"] = gallery
+                if avatarUrl is not None:
+                    user["avatarUrl"] = avatarUrl
+
                 self.connector.write_json(self.filename, users)
                 return UserDTO(**user)
+
         return None
