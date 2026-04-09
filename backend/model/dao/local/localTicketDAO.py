@@ -14,11 +14,7 @@ class LocalTicketDAO:
 
     def get_tickets_by_user(self, id_usuario):
         tickets = self.connector.read_json(self.filename)
-        return [
-            TicketDTO(**ticket)
-            for ticket in tickets
-            if ticket["id_usuario"] == id_usuario and ticket.get("status") != "Cancelada"
-        ]
+        return [TicketDTO(**ticket) for ticket in tickets if ticket["id_usuario"] == id_usuario]
 
     def get_ticket_by_id(self, ticket_id):
         tickets = self.connector.read_json(self.filename)

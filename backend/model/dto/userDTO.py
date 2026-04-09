@@ -1,6 +1,5 @@
 class UserDTO:
-    def __init__(self, id_usuario, rol, name, email, password, address, avatarUrl=None,
-                 businessName=None, phone=None, biography="", socialLinks=None, gallery=None):
+    def __init__(self, id_usuario, rol, name, email, password, address, avatarUrl):
         self.id_usuario = id_usuario
         self.rol = rol
         self.name = name
@@ -8,16 +7,6 @@ class UserDTO:
         self.password = password
         self.address = address
         self.avatarUrl = avatarUrl
-        self.businessName = businessName
-        self.phone = phone
-        self.biography = biography or ""
-        self.socialLinks = socialLinks or {
-            "facebook": "",
-            "instagram": "",
-            "x": "",
-            "website": ""
-        }
-        self.gallery = gallery or []
 
     def to_dict(self):
         return {
@@ -27,12 +16,7 @@ class UserDTO:
             "email": self.email,
             "password": self.password,
             "address": self.address,
-            "avatarUrl": self.avatarUrl,
-            "businessName": self.businessName,
-            "phone": self.phone,
-            "biography": self.biography,
-            "socialLinks": self.socialLinks,
-            "gallery": self.gallery
+            "avatarUrl": self.avatarUrl
         }
 
     def to_public_dict(self):
@@ -42,10 +26,5 @@ class UserDTO:
             "name": self.name,
             "email": self.email,
             "address": self.address,
-            "avatarUrl": self.avatarUrl,
-            "businessName": self.businessName,
-            "phone": self.phone,
-            "biography": self.biography,
-            "socialLinks": self.socialLinks,
-            "gallery": self.gallery
+            "avatarUrl": self.avatarUrl
         }
