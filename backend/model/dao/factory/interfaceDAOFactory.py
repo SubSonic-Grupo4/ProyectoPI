@@ -8,6 +8,14 @@ class InterfaceDAOFactory(ABC):
         pass
 
     @abstractmethod
+    def get_ticket_dao(self):
+        pass
+
+    @abstractmethod
+    def get_purchase_options_dao(self):
+        pass
+
+    @abstractmethod
     def get_space_dao(self):
         pass
 

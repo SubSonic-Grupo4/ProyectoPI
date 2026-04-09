@@ -21,6 +21,23 @@ class LocalUserDAO:
                 return UserDTO(**user)
         return None
 
+    def update_user_profile(self, id_usuario, name, email, address, avatarUrl=None):
+        users = self.connector.read_json(self.filename)
+
+        for user in users:
+            if user["id_usuario"] == id_usuario:
+                user["name"] = name
+                user["email"] = email
+                user["address"] = address
+
+                if avatarUrl is not None:
+                    user["avatarUrl"] = avatarUrl
+
+                self.connector.write_json(self.filename, users)
+                return UserDTO(**user)
+
+        return None
+
     def update_provider_profile(self, id_usuario, name, email, address, avatarUrl=None,
                                 businessName=None, phone=None, biography=None, socialLinks=None):
         users = self.connector.read_json(self.filename)

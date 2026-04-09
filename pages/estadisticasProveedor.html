@@ -1,70 +1,115 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subsonic Analytics - Basic</title>
-    <link rel="stylesheet" href="estadisticasProveedorEstilo.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proveedor - Estadisticas</title>
+  <link rel="stylesheet" href="../css/estadisticasProveedorEstilo.css?v=1">
 </head>
 <body>
-    <div class="dashboard-container">
-        <header class="main-header">
-            <div class="brand">
-                <h1>SUBSONIC ANALYTICS</h1>
-                <span>DASHBOARD | LIVE VENDOR PORTAL</span>
+  <div class="dashboard-container">
+    <header class="main-header">
+      <div class="brand">
+        <p class="brand-kicker">Subsonic</p>
+        <h1>Analitica del proveedor</h1>
+        <span id="providerSubtitle">Cargando estadisticas del proveedor...</span>
+      </div>
+
+      <div class="header-actions">
+        <div class="timestamp" id="liveClock">--:--</div>
+        <button id="logoutBtn" class="btn-ghost" type="button">Cerrar sesion</button>
+      </div>
+    </header>
+
+    <nav class="top-nav">
+      <a class="nav-link" href="./gestion.html?v=1">Gestion</a>
+      <a class="nav-link" href="./ReservaEspacios.html?v=1">Espacios</a>
+      <a class="nav-link active" href="./estadisticasProveedor.html?v=1">Estadisticas</a>
+    </nav>
+
+    <div id="statsMessage" class="status-message" hidden></div>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-label">Total ventas</span>
+        <strong id="totalVentasValue" class="stat-value">0 EUR</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Visitas al perfil</span>
+        <strong id="profileViewsValue" class="stat-value">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Solicitudes totales</span>
+        <strong id="totalRequestsValue" class="stat-value">0</strong>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Ratio de aprobacion</span>
+        <strong id="approvalRateValue" class="stat-value">0%</strong>
+      </article>
+    </section>
+
+    <div class="main-layout">
+      <section class="primary-content">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Reservas mensuales</p>
+              <h2>Evolucion de solicitudes</h2>
             </div>
-            <div class="timestamp" id="live-clock">Oct 26, 2024 | 21:34:58</div>
-        </header>
+            <span id="monthlyPeak" class="panel-pill">Sin datos</span>
+          </div>
 
-        <div class="main-layout">
-            <section class="primary-content">
-                <div class="top-stats">
-                    <div class="stat-group">
-                        <span class="label">TOTAL SALES</span>
-                        <div class="value">$4,230.75 <small>💵</small></div>
-                    </div>
-                    <div class="stat-group">
-                        <span class="label">PLAYS</span>
-                        <div class="value">12.5k <small>📊</small></div>
-                    </div>
-                    <div class="filter-tag">All Time</div>
-                </div>
+          <div id="monthlyReservations" class="bars-chart">
+            <p class="empty-state">No hay datos de reservas mensuales.</p>
+          </div>
+        </article>
 
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h2>CONTENT PLAYS OVER TIME</h2>
-                        <span class="peak-badge">Peak: 14.8k Plays at 21:00</span>
-                    </div>
-                    <div class="canvas-wrapper">
-                        <canvas id="playsChart"></canvas>
-                        <div class="timeline-labels">
-                            <span>0H</span>
-                            <span>24H</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Actividad</p>
+              <h2>Registro reciente</h2>
+            </div>
+          </div>
 
-            <aside class="side-widgets">
-                <div class="widget card">
-                    <h3>BOOTH RESERVATIONS</h3>
-                    <div class="progress-circle">
-                        <div class="circle-content">
-                            <strong>78% FILLED</strong>
-                            <span>(187/240)</span>
-                        </div>
-                    </div>
-                </div>
+          <div id="activityLog" class="activity-list">
+            <p class="empty-state">No hay actividad registrada.</p>
+          </div>
+        </article>
+      </section>
 
-                <div class="widget card">
-                    <h3>LIVE FEED</h3>
-                    <p class="feed-item">21:32 NEW TICKET SALE: VENDOR 8</p>
-                </div>
+      <aside class="side-widgets">
+        <article class="widget card">
+          <h3>Estado de solicitudes</h3>
+          <div class="mini-metrics">
+            <div>
+              <strong id="pendingValue">0</strong>
+              <span>Pendientes</span>
+            </div>
+            <div>
+              <strong id="approvedValue">0</strong>
+              <span>Aprobadas</span>
+            </div>
+            <div>
+              <strong id="rejectedValue">0</strong>
+              <span>Rechazadas</span>
+            </div>
+          </div>
+        </article>
 
-                <button class="btn-refresh" onclick="location.reload()">REFRESH</button>
-            </aside>
-        </div>
+        <article class="widget card">
+          <h3>Resumen rapido</h3>
+          <p id="summaryText" class="summary-copy">Todavia no se han cargado los datos.</p>
+        </article>
+
+        <button id="refreshStatsBtn" class="btn-refresh" type="button">Actualizar datos</button>
+      </aside>
     </div>
-    <script src="script.js"></script>
+  </div>
+
+  <script src="../js/provider-stats.js?v=1"></script>
 </body>
 </html>

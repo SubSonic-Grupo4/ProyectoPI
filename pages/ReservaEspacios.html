@@ -1,74 +1,134 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subsonic Vendors - Reserva de Espacios</title>
-    <link rel="stylesheet" href="EstiloReservaEspacio.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proveedor - Reserva de espacios</title>
+  <link rel="stylesheet" href="../css/EstiloReservaEspacio.css?v=1">
 </head>
 <body>
-    <div class="dashboard-wrapper">
-        <aside class="sidebar">
-            <div class="logo">
-                <span class="icon-s">S</span>
-                <h2>SUBSONIC <span>VENDORS</span></h2>
-            </div>
-            
-            <div class="filter-section">
-                <label>Tipo de Espacio</label>
-                <div class="toggle-group">
-                    <div class="toggle-item">
-                        <span>Food</span> 
-                        <input type="checkbox" class="filter-check" value="F" checked>
-                    </div>
-                    <div class="toggle-item">
-                        <span>Merch</span> 
-                        <input type="checkbox" class="filter-check" value="M" checked>
-                    </div>
-                    <div class="toggle-item">
-                        <span>Art</span> 
-                        <input type="checkbox" class="filter-check" value="A">
-                    </div>
-                </div>
+  <div class="dashboard-wrapper">
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="icon-s">S</span>
+        <div>
+          <p class="sidebar-kicker">Subsonic</p>
+          <h2>Vendor Hub</h2>
+        </div>
+      </div>
+
+      <div class="provider-mini-card">
+        <h3 id="providerNameLabel">Proveedor</h3>
+        <p id="providerBusinessLabel">Cargando perfil...</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link" href="./gestion.html?v=1">Gestion</a>
+        <a class="nav-link active" href="./ReservaEspacios.html?v=1">Espacios</a>
+        <a class="nav-link" href="./estadisticasProveedor.html?v=1">Estadisticas</a>
+      </nav>
+
+      <div class="filter-section">
+        <label>Tipo de espacio</label>
+        <div class="toggle-group">
+          <label class="toggle-item">
+            <span>Food</span>
+            <input type="checkbox" class="filter-check" value="FOOD" checked>
+          </label>
+          <label class="toggle-item">
+            <span>Merch</span>
+            <input type="checkbox" class="filter-check" value="MERCH" checked>
+          </label>
+          <label class="toggle-item">
+            <span>Art</span>
+            <input type="checkbox" class="filter-check" value="ART" checked>
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <label>Rango de precio</label>
+        <select class="custom-select" id="priceFilter">
+          <option value="all">Todos</option>
+          <option value="budget">Hasta 1000 EUR</option>
+          <option value="premium">Mas de 1000 EUR</option>
+        </select>
+      </div>
+
+      <label class="toggle-item standalone-toggle">
+        <span>Solo disponibles</span>
+        <input type="checkbox" id="availableOnly" checked>
+      </label>
+
+      <button id="resetFiltersBtn" class="btn-primary" type="button">Reiniciar filtros</button>
+      <button id="logoutBtn" class="btn-primary secondary" type="button">Cerrar sesion</button>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <div>
+          <p class="header-kicker">Reserva de espacios</p>
+          <h3>Selecciona un stand y envia tu solicitud</h3>
+          <p class="header-copy">Los espacios se cargan desde el backend y tus solicitudes quedan registradas para el proveedor autenticado.</p>
+        </div>
+      </header>
+
+      <div id="spacesMessage" class="status-message" hidden></div>
+
+      <div class="content-layout">
+        <section class="spaces-column">
+          <div id="spacesSummary" class="summary-strip">Cargando espacios...</div>
+          <div id="boothGrid" class="booth-grid"></div>
+        </section>
+
+        <aside class="details-column">
+          <article id="selectedSpaceCard" class="detail-card">
+            <p class="placeholder-title">Ningun espacio seleccionado</p>
+            <p class="placeholder-copy">Pulsa en un espacio para ver sus detalles y solicitarlo.</p>
+          </article>
+
+          <form id="applicationForm" class="application-card" hidden>
+            <div class="form-header">
+              <p class="header-kicker">Solicitud</p>
+              <h4>Enviar propuesta</h4>
             </div>
 
-            <div class="filter-section">
-                <label>Rango de Precio</label>
-                <select class="custom-select" id="priceFilter">
-                    <option value="all">Todos</option>
-                    <option value="1000">Económico (< $1000)</option>
-                    <option value="premium">Premium (> $1000)</option>
-                </select>
-            </div>
+            <label class="field">
+              <span>Categoria del servicio</span>
+              <select id="applicationCategory" class="custom-select">
+                <option value="FOOD">FOOD</option>
+                <option value="MERCH">MERCH</option>
+                <option value="ART">ART</option>
+              </select>
+            </label>
 
-            <button class="btn-primary" onclick="window.location.reload()">Reiniciar Vista</button>
+            <label class="field">
+              <span>Portfolio (opcional)</span>
+              <input id="portfolioUrlInput" type="text" placeholder="https://tuportfolio.com">
+            </label>
+
+            <label class="field">
+              <span>Descripcion de la propuesta</span>
+              <textarea id="applicationDescription" placeholder="Describe que vas a ofrecer en este espacio."></textarea>
+            </label>
+
+            <button id="submitApplicationBtn" class="btn-primary" type="submit">Enviar solicitud</button>
+          </form>
+
+          <article class="applications-card">
+            <div class="form-header">
+              <p class="header-kicker">Historial</p>
+              <h4>Mis solicitudes</h4>
+            </div>
+            <div id="applicationsList" class="applications-list">
+              <p class="placeholder-copy">Cargando solicitudes...</p>
+            </div>
+          </article>
         </aside>
+      </div>
+    </main>
+  </div>
 
-        <main class="main-content">
-            <header class="content-header">
-                <h3>Cuadrícula de Disponibilidad de Stands</h3>
-            </header>
-            
-            <div class="grid-container">
-                <div id="boothGrid" class="booth-grid">
-                    </div>
-            </div>
-
-            <div id="boothTooltip" class="booth-tooltip">
-                <div class="tooltip-content">
-                    <strong>Stand: <span id="tooltipID">-</span></strong>
-                    <p>Tipo: <span id="tooltipType">-</span><br>
-                       Tamaño: 10x10ft<br>
-                       Precio: <span id="tooltipPrice">-</span></p>
-                    <div class="tooltip-actions">
-                        <button class="btn-small btn-dark">Reservar</button>
-                        <button class="btn-small btn-outline">INFO</button>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script src="script.js"></script>
+  <script src="../js/provider-spaces.js?v=1"></script>
 </body>
 </html>

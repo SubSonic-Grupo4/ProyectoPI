@@ -94,7 +94,11 @@
 
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        window.location.href = "tickets.html";
+        if (data.user.rol === "PROVEEDOR") {
+          window.location.href = "gestion.html?v=1";
+        } else {
+          window.location.href = "tickets.html";
+        }
       } catch (error) {
         errorText.style.display = "block";
       }
