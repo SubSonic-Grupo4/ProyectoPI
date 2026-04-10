@@ -20,6 +20,11 @@ def bearer_headers(access_token):
 response = client.get("/")
 assert response.status_code == 200, response.text
 
+# Visitante publico
+response = client.get("/events")
+assert response.status_code == 200, response.text
+assert len(response.json()) >= 1, response.text
+
 # Login cliente con token
 client_login = login_json("cliente@subsonic.es", "password123")
 assert client_login["user"]["rol"] == "CLIENTE", client_login
