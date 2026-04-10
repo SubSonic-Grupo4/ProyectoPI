@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subsonic - Visitante</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/visitante.css?v=2">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fa-solid fa-music"></i> Subsonic
+        </div>
+
+        <nav class="nav-links">
+            <a href="./visitante.html?v=2">Eventos</a>
+            <a href="#eventsHeader">Agenda</a>
+            <a href="./login.html">Acceder</a>
+        </nav>
+
+        <div class="auth-buttons">
+            <a href="./login.html" class="btn btn-outline">Login</a>
+            <a href="./login.html" class="btn btn-dark">Registro</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-pill">festival publico · acceso visitante</div>
+            <h1 class="hero-title">
+                SUBSONIC<br>
+                <span>FESTIVAL</span>
+            </h1>
+            <p class="hero-subtitle">Explora los eventos del festival, consulta fechas y entra al area privada cuando quieras comprar o gestionar tu perfil.</p>
+            <a id="heroCta" class="btn btn-dark hero-cta" href="./login.html">
+                <i class="fa-solid fa-ticket"></i> Ver acceso a compra
+            </a>
+        </div>
+    </section>
+
+    <main class="container">
+        <section class="filter-section">
+            <div class="filter-group">
+                <label for="desde">Desde</label>
+                <input type="date" id="desde">
+            </div>
+
+            <div class="filter-group">
+                <label for="hasta">Hasta</label>
+                <input type="date" id="hasta">
+            </div>
+
+            <div class="filter-group">
+                <label for="genero">Genero</label>
+                <select id="genero">
+                    <option value="todos">Todos</option>
+                    <option value="techno">Techno</option>
+                    <option value="house">House</option>
+                    <option value="electronic">Electronic</option>
+                </select>
+            </div>
+
+            <div class="filter-group filter-actions">
+                <button id="searchBtn" class="btn btn-dark btn-search" type="button">
+                    <i class="fa-solid fa-magnifying-glass"></i> Buscar eventos
+                </button>
+            </div>
+        </section>
+
+        <div class="events-header" id="eventsHeader">
+            <h2>Proximos eventos</h2>
+            <p id="eventsSummary">Cargando calendario del festival...</p>
+        </div>
+
+        <div id="visitorMessage" class="visitor-message" hidden></div>
+        <div id="eventsGrid" class="events-grid"></div>
+    </main>
+
+    <script src="../js/auth.js?v=1"></script>
+    <script src="../js/visitor.js?v=1"></script>
+</body>
+</html>

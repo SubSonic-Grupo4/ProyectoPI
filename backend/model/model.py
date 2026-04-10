@@ -20,7 +20,7 @@ class Model:
         user = self.user_dao.get_user_by_id(id_usuario)
         if not user:
             return None, "Usuario no encontrado"
-        if user.rol != "PROVEEDOR":
+        if str(user.rol).upper() != "PROVEEDOR":
             return None, "El usuario no pertenece al perfil Proveedor"
         return user, None
 
@@ -70,6 +70,40 @@ class Model:
 
     def get_purchase_options(self):
         return self.purchase_options_dao.get_purchase_options()
+
+    def get_public_events(self):
+        options = self.purchase_options_dao.get_purchase_options()
+        base_events = options.to_dict().get("events", [])
+
+        event_metadata = {
+            "E-101": {
+                "genre": "techno",
+                "location": "Main Stage",
+                "time": "22:00",
+                "summary": "Una noche central de techno contundente para inaugurar la experiencia Subsonic."
+            },
+            "E-202": {
+                "genre": "house",
+                "location": "Underground Dome",
+                "time": "23:30",
+                "summary": "Sesion nocturna con un ambiente mas club y una propuesta house de pista continua."
+            }
+        }
+
+        public_events = []
+        for index, event in enumerate(base_events):
+            metadata = event_metadata.get(event.get("eventId"), {})
+            public_events.append({
+                "eventId": event.get("eventId"),
+                "name": event.get("name"),
+                "date": event.get("date"),
+                "genre": metadata.get("genre", "electronic"),
+                "location": metadata.get("location", "Festival Grounds"),
+                "time": metadata.get("time", "21:00"),
+                "summary": metadata.get("summary", "Evento oficial del Subsonic Festival.")
+            })
+
+        return public_events
 
     def get_provider_profile(self, id_usuario):
         user, error = self._require_provider(id_usuario)

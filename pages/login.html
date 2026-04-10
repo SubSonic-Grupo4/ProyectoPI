@@ -67,6 +67,7 @@
     </section>
   </main>
 
+  <script src="../js/auth.js?v=1"></script>
   <script>
     const API_BASE_URL = "";
 
@@ -92,14 +93,15 @@
 
         const data = await response.json();
 
-        localStorage.setItem("user", JSON.stringify(data.user));
+        authSaveSession(data.user, data.access_token);
 
-        if (data.user.rol === "PROVEEDOR") {
+        if (String(data.user.rol).toUpperCase() === "PROVEEDOR") {
           window.location.href = "gestion.html?v=1";
         } else {
           window.location.href = "tickets.html";
         }
       } catch (error) {
+        authClearSession();
         errorText.style.display = "block";
       }
     }

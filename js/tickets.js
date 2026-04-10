@@ -3,23 +3,21 @@ const API_BASE_URL = "";
 let currentTickets = [];
 
 function getStoredUser() {
-  return JSON.parse(localStorage.getItem("user"));
+  return authGetStoredUser();
 }
 
 function saveStoredUser(user) {
-  localStorage.setItem("user", JSON.stringify(user));
+  authSaveSession(user);
 }
 
 async function loadTickets() {
-  const user = getStoredUser();
-
+  const user = authRequireSession();
   if (!user) {
-    window.location.href = "login.html";
     return;
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/tickets/${user.id_usuario}`);
+    const response = await authFetch(`${API_BASE_URL}/tickets/${user.id_usuario}`);
 
     if (!response.ok) {
       throw new Error("No se pudieron cargar los tickets");
@@ -135,7 +133,7 @@ async function loadUserProfilePanel() {
   renderProfilePanel(user);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/profile/${user.id_usuario}`);
+    const response = await authFetch(`${API_BASE_URL}/profile/${user.id_usuario}`);
 
     if (!response.ok) {
       throw new Error("No se pudo cargar el perfil");
@@ -151,7 +149,7 @@ async function loadUserProfilePanel() {
 
 async function cancelTicket(ticketId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/ticket/cancel/${ticketId}`, {
+    const response = await authFetch(`${API_BASE_URL}/ticket/cancel/${ticketId}`, {
       method: "PUT"
     });
 
@@ -195,7 +193,7 @@ function attachHandlers() {
       const emailInput = document.getElementById("emailInput");
 
       try {
-        const response = await fetch(`${API_BASE_URL}/profile/${user.id_usuario}`, {
+        const response = await authFetch(`${API_BASE_URL}/profile/${user.id_usuario}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json"

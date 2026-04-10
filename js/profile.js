@@ -3,11 +3,11 @@ const API_BASE_URL = "";
 let currentUser = null;
 
 function getStoredUser() {
-  return JSON.parse(localStorage.getItem("user"));
+  return authGetStoredUser();
 }
 
 function saveStoredUser(user) {
-  localStorage.setItem("user", JSON.stringify(user));
+  authSaveSession(user);
 }
 
 function renderProfileFields(user) {
@@ -23,10 +23,8 @@ function renderProfileFields(user) {
 }
 
 async function loadProfileFromBackend() {
-  const storedUser = getStoredUser();
-
+  const storedUser = authRequireSession();
   if (!storedUser) {
-    window.location.href = "login.html";
     return;
   }
 
@@ -34,7 +32,7 @@ async function loadProfileFromBackend() {
   renderProfileFields(currentUser);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/profile/${currentUser.id_usuario}`);
+    const response = await authFetch(`${API_BASE_URL}/profile/${currentUser.id_usuario}`);
 
     if (!response.ok) {
       throw new Error("No se pudo cargar el perfil");
@@ -81,12 +79,11 @@ function attachSaveHandler() {
   saveBtn.addEventListener("click", async () => {
     if (!currentUser) {
       alert("Debes iniciar sesion");
-      window.location.href = "login.html";
       return;
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/profile/${currentUser.id_usuario}`, {
+      const response = await authFetch(`${API_BASE_URL}/profile/${currentUser.id_usuario}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

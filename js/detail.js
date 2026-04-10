@@ -18,7 +18,7 @@ function setBadge(badgeEl, status) {
 
 async function cancelTicket(ticketId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/ticket/cancel/${ticketId}`, {
+    const response = await authFetch(`${API_BASE_URL}/ticket/cancel/${ticketId}`, {
       method: "PUT"
     });
 
@@ -35,11 +35,10 @@ async function cancelTicket(ticketId) {
 }
 
 async function loadTicketDetail() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = authRequireSession();
   const ticketId = qs("ticketId");
 
   if (!user) {
-    window.location.href = "login.html";
     return;
   }
 
@@ -49,7 +48,7 @@ async function loadTicketDetail() {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/ticket/${ticketId}`);
+    const response = await authFetch(`${API_BASE_URL}/ticket/${ticketId}`);
 
     if (!response.ok) {
       throw new Error("Ticket no encontrado");

@@ -3,22 +3,21 @@ const API_BASE_URL = "";
 let currentProvider = null;
 
 function getStoredUser() {
-  return JSON.parse(localStorage.getItem("user"));
+  return authGetStoredUser();
 }
 
 function saveStoredUser(user) {
-  localStorage.setItem("user", JSON.stringify(user));
+  authSaveSession(user);
 }
 
 function ensureProviderAccess() {
-  const user = getStoredUser();
+  const user = authRequireSession();
 
   if (!user) {
-    window.location.href = "./login.html";
     return null;
   }
 
-  if (user.rol !== "PROVEEDOR") {
+  if (String(user.rol).toUpperCase() !== "PROVEEDOR") {
     window.location.href = "./tickets.html";
     return null;
   }
@@ -106,7 +105,7 @@ async function loadProviderProfile() {
   if (!user) return;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/provider/profile/${user.id_usuario}`);
+    const response = await authFetch(`${API_BASE_URL}/provider/profile/${user.id_usuario}`);
 
     if (!response.ok) {
       throw new Error("No se pudo cargar el perfil del proveedor");
@@ -140,7 +139,7 @@ async function saveProviderProfile() {
   };
 
   try {
-    const response = await fetch(`${API_BASE_URL}/provider/profile/${currentProvider.id_usuario}`, {
+    const response = await authFetch(`${API_BASE_URL}/provider/profile/${currentProvider.id_usuario}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -175,7 +174,7 @@ async function uploadGalleryImage(file) {
 
   try {
     const imageUrl = await readFileAsDataUrl(file);
-    const response = await fetch(`${API_BASE_URL}/provider/gallery/${currentProvider.id_usuario}`, {
+    const response = await authFetch(`${API_BASE_URL}/provider/gallery/${currentProvider.id_usuario}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -239,7 +238,7 @@ function attachLogout() {
   if (!button) return;
 
   button.addEventListener("click", () => {
-    localStorage.removeItem("user");
+    authClearSession();
     window.location.href = "./login.html";
   });
 }

@@ -3,18 +3,17 @@ const API_BASE_URL = "";
 let currentProvider = null;
 
 function getStoredUser() {
-  return JSON.parse(localStorage.getItem("user"));
+  return authGetStoredUser();
 }
 
 function ensureProviderAccess() {
-  const user = getStoredUser();
+  const user = authRequireSession();
 
   if (!user) {
-    window.location.href = "./login.html";
     return null;
   }
 
-  if (user.rol !== "PROVEEDOR") {
+  if (String(user.rol).toUpperCase() !== "PROVEEDOR") {
     window.location.href = "./tickets.html";
     return null;
   }
@@ -148,8 +147,8 @@ async function loadProviderStats() {
 
   try {
     const [profileResponse, statsResponse] = await Promise.all([
-      fetch(`${API_BASE_URL}/provider/profile/${user.id_usuario}`),
-      fetch(`${API_BASE_URL}/provider/stats/${user.id_usuario}`)
+      authFetch(`${API_BASE_URL}/provider/profile/${user.id_usuario}`),
+      authFetch(`${API_BASE_URL}/provider/stats/${user.id_usuario}`)
     ]);
 
     if (!profileResponse.ok || !statsResponse.ok) {
@@ -157,7 +156,7 @@ async function loadProviderStats() {
     }
 
     currentProvider = await profileResponse.json();
-    localStorage.setItem("user", JSON.stringify(currentProvider));
+    authSaveSession(currentProvider);
 
     const stats = await statsResponse.json();
 
@@ -178,7 +177,7 @@ function attachLogout() {
   if (!button) return;
 
   button.addEventListener("click", () => {
-    localStorage.removeItem("user");
+    authClearSession();
     window.location.href = "./login.html";
   });
 }

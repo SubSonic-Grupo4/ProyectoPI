@@ -48,7 +48,7 @@ function renderOptions() {
 }
 
 async function loadPurchaseOptions() {
-  const response = await fetch(`${API_BASE_URL}/purchase/options`);
+  const response = await authFetch(`${API_BASE_URL}/purchase/options`);
 
   if (!response.ok) {
     throw new Error("No se pudieron cargar las opciones de compra");
@@ -68,11 +68,9 @@ function attachPurchaseHandler() {
   if (!eventSelect || !passSelect || !qtySelect || !confirmBtn) return;
 
   confirmBtn.addEventListener("click", async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
+    const user = authRequireSession();
     if (!user) {
       alert("Debes iniciar sesion primero");
-      window.location.href = "./login.html";
       return;
     }
 
@@ -86,7 +84,7 @@ function attachPurchaseHandler() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/purchase`, {
+      const response = await authFetch(`${API_BASE_URL}/purchase`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -114,6 +112,10 @@ function attachPurchaseHandler() {
 }
 
 async function initPurchase() {
+  if (!authRequireSession()) {
+    return;
+  }
+
   try {
     await loadPurchaseOptions();
     renderOptions();

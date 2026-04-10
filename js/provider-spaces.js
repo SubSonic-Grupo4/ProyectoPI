@@ -6,18 +6,17 @@ let applications = [];
 let selectedSpace = null;
 
 function getStoredUser() {
-  return JSON.parse(localStorage.getItem("user"));
+  return authGetStoredUser();
 }
 
 function ensureProviderAccess() {
-  const user = getStoredUser();
+  const user = authRequireSession();
 
   if (!user) {
-    window.location.href = "./login.html";
     return null;
   }
 
-  if (user.rol !== "PROVEEDOR") {
+  if (String(user.rol).toUpperCase() !== "PROVEEDOR") {
     window.location.href = "./tickets.html";
     return null;
   }
@@ -215,13 +214,13 @@ async function loadProviderSummary() {
   currentProvider = user;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/provider/profile/${user.id_usuario}`);
+    const response = await authFetch(`${API_BASE_URL}/provider/profile/${user.id_usuario}`);
     if (!response.ok) {
       throw new Error("No se pudo cargar el proveedor");
     }
 
     currentProvider = await response.json();
-    localStorage.setItem("user", JSON.stringify(currentProvider));
+    authSaveSession(currentProvider);
 
     const nameLabel = document.getElementById("providerNameLabel");
     const businessLabel = document.getElementById("providerBusinessLabel");
@@ -235,7 +234,7 @@ async function loadProviderSummary() {
 }
 
 async function loadSpaces() {
-  const response = await fetch(`${API_BASE_URL}/spaces`);
+  const response = await authFetch(`${API_BASE_URL}/spaces`);
 
   if (!response.ok) {
     throw new Error("No se pudieron cargar los espacios");
@@ -248,7 +247,7 @@ async function loadSpaces() {
 async function loadApplications() {
   if (!currentProvider) return;
 
-  const response = await fetch(`${API_BASE_URL}/provider/applications/${currentProvider.id_usuario}`);
+  const response = await authFetch(`${API_BASE_URL}/provider/applications/${currentProvider.id_usuario}`);
 
   if (!response.ok) {
     throw new Error("No se pudieron cargar las solicitudes");
@@ -279,7 +278,7 @@ async function submitApplication(event) {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/provider/applications`, {
+    const response = await authFetch(`${API_BASE_URL}/provider/applications`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -375,7 +374,7 @@ function attachLogout() {
   if (!button) return;
 
   button.addEventListener("click", () => {
-    localStorage.removeItem("user");
+    authClearSession();
     window.location.href = "./login.html";
   });
 }

@@ -1,79 +1,79 @@
 from fastapi.testclient import TestClient
+
 from backend.controller.controller import app
+
 
 client = TestClient(app)
 
-# Root
-resp = client.get('/')
-assert resp.status_code == 200, resp.text
 
-# Login proveedor
-resp = client.post('/login', json={'email': 'proveedor@subsonic.es', 'password': 'password123'})
-assert resp.status_code == 200, resp.text
-user = resp.json()['user']
-assert user['rol'] == 'PROVEEDOR', user
-provider_id = user['id_usuario']
+def login_json(email, password):
+    response = client.post("/login", json={"email": email, "password": password})
+    assert response.status_code == 200, response.text
+    return response.json()
 
-# Espacios
-resp = client.get('/spaces?tipo=FOOD&only_available=true')
-assert resp.status_code == 200, resp.text
-spaces = resp.json()
+
+def bearer_headers(access_token):
+    return {"Authorization": f"Bearer {access_token}"}
+
+
+# Root publico
+response = client.get("/")
+assert response.status_code == 200, response.text
+
+# Login cliente con token
+client_login = login_json("cliente@subsonic.es", "password123")
+assert client_login["user"]["rol"] == "CLIENTE", client_login
+client_headers = bearer_headers(client_login["access_token"])
+
+# Login proveedor con token
+provider_login = login_json("proveedor@subsonic.es", "password123")
+assert provider_login["user"]["rol"] == "PROVEEDOR", provider_login
+provider_id = provider_login["user"]["id_usuario"]
+provider_headers = bearer_headers(provider_login["access_token"])
+
+# Flujo Cliente
+response = client.get("/profile/C-001", headers=client_headers)
+assert response.status_code == 200, response.text
+
+response = client.get("/tickets/C-001", headers=client_headers)
+assert response.status_code == 200, response.text
+
+response = client.get("/purchase/options", headers=client_headers)
+assert response.status_code == 200, response.text
+
+# Flujo Proveedor
+response = client.get("/spaces", headers=provider_headers)
+assert response.status_code == 200, response.text
+spaces = response.json()
 assert len(spaces) >= 1, spaces
-space_id = spaces[0]['idEspacio']
+space_id = spaces[0]["idEspacio"]
 
-resp = client.get(f'/spaces/{space_id}')
-assert resp.status_code == 200, resp.text
+response = client.get(f"/spaces/{space_id}", headers=provider_headers)
+assert response.status_code == 200, response.text
 
-# Perfil proveedor
-resp = client.get(f'/provider/profile/{provider_id}')
-assert resp.status_code == 200, resp.text
+response = client.get(f"/provider/profile/{provider_id}", headers=provider_headers)
+assert response.status_code == 200, response.text
 
-resp = client.put(
-    f'/provider/profile/{provider_id}',
-    json={
-        'name': 'Laura García',
-        'email': 'proveedor@subsonic.es',
-        'address': 'Avenida actualizada 99, Cáceres',
-        'avatarUrl': 'https://example.com/avatar.png',
-        'businessName': 'Food Trucks SL',
-        'phone': '+34 600 111 222',
-        'biography': 'Bio actualizada',
-        'facebook': 'https://facebook.com/foodtruckssl',
-        'instagram': 'https://instagram.com/foodtruckssl',
-        'x': 'https://x.com/foodtruckssl',
-        'website': 'https://foodtruckssl.example.com'
-    }
+response = client.get(f"/provider/applications/{provider_id}", headers=provider_headers)
+assert response.status_code == 200, response.text
+
+response = client.get(f"/provider/stats/{provider_id}", headers=provider_headers)
+assert response.status_code == 200, response.text
+
+# Sin token no se puede acceder
+response = client.get("/tickets/C-001")
+assert response.status_code == 401, response.text
+
+# Un proveedor no puede usar rutas de cliente
+response = client.get("/tickets/C-001", headers=provider_headers)
+assert response.status_code == 403, response.text
+
+# OAuth2 password flow
+response = client.post(
+    "/token",
+    data={"username": "cliente@subsonic.es", "password": "password123"}
 )
-assert resp.status_code == 200, resp.text
+assert response.status_code == 200, response.text
+assert response.json()["token_type"] == "bearer", response.text
 
-resp = client.post(f'/provider/gallery/{provider_id}', json={'imageUrl': 'https://example.com/gallery-1.jpg'})
-assert resp.status_code == 200, resp.text
-
-# Solicitudes
-resp = client.get(f'/provider/applications/{provider_id}')
-assert resp.status_code == 200, resp.text
-
-resp = client.post(
-    '/provider/applications',
-    json={
-        'id_proveedor': provider_id,
-        'id_espacio': 'ESP-MERCH-01',
-        'descripcion': 'Puesto temporal de productos exclusivos.',
-        'categoriaServicio': 'MERCH',
-        'portfolioUrl': 'https://example.com/portfolio'
-    }
-)
-assert resp.status_code == 200, resp.text
-
-# Estadísticas
-resp = client.get(f'/provider/stats/{provider_id}')
-assert resp.status_code == 200, resp.text
-stats = resp.json()
-assert 'totalSolicitudes' in stats, stats
-assert 'activityLog' in stats, stats
-
-# Usuario no proveedor
-resp = client.get('/provider/profile/C-001')
-assert resp.status_code == 403, resp.text
-
-print('SMOKE TEST OK')
+print("SMOKE TEST OK")

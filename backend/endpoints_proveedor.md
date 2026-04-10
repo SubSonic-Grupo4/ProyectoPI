@@ -1,7 +1,14 @@
-# Endpoints del módulo Proveedor
+# Endpoints del modulo Proveedor
 
-## Autenticación
+## Autenticacion
 - `POST /login`
+- `POST /token`
+
+Las rutas privadas del proveedor requieren la cabecera:
+
+```http
+Authorization: Bearer <access_token>
+```
 
 ## Espacios
 - `GET /spaces`
@@ -16,5 +23,5 @@
 - `GET /provider/applications/{id_usuario}`
 - `POST /provider/applications`
 
-## Estadísticas
+## Estadisticas
 - `GET /provider/stats/{id_usuario}`
