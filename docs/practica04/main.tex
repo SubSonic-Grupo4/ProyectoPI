@@ -75,12 +75,13 @@ Siguiendo el enunciado de la pr\'actica, se ha a\~nadido al repositorio una carp
 \begin{itemize}
   \item \texttt{Docker/Dockerfile}: define la imagen Docker de la aplicaci\'on.
   \item \texttt{Docker/README.md}: resume los comandos de construcci\'on, ejecuci\'on y prueba local.
-  \item \texttt{Docker/azure-deploy-template.ps1}: incluye una plantilla de comandos para desplegar la imagen en Azure.
+  \item \texttt{Docker/azure-deploy-template.ps1}: incluye una plantilla de comandos para un despliegue mediante Azure Container Registry.
+  \item \texttt{.github/workflows/docker-ghcr.yml}: automatiza la construcci\'on de la imagen Docker y su publicaci\'on en GitHub Container Registry.
 \end{itemize}
 
 Adem\'as, se ha a\~nadido un archivo \texttt{.dockerignore} en la ra\'iz del proyecto. Su finalidad es evitar que se copien al contenedor archivos innecesarios como \texttt{.git}, \texttt{.venv}, documentaci\'on generada, archivos temporales o dependencias locales.
 
-\subsection{Imagen externa utilizada}
+\subsection{Imagenes externas utilizadas}
 
 La imagen base utilizada en el Dockerfile es:
 
@@ -91,6 +92,14 @@ python:3.11-slim
 Esta imagen procede de Docker Hub y se utiliza como base ligera para ejecutar aplicaciones Python. Sobre ella se instalan las dependencias definidas en \texttt{requirements.txt} y se copia el c\'odigo necesario para ejecutar SubSonic Festival.
 
 La finalidad de esta imagen externa es proporcionar un entorno Python estable y reproducible sin depender de la configuraci\'on concreta del ordenador del desarrollador.
+
+Adem\'as, para el despliegue final se ha publicado la imagen de la aplicaci\'on en GitHub Container Registry, ya que la suscripci\'on de Azure utilizada bloqueaba la creaci\'on de Azure Container Registry por pol\'itica de la cuenta. La imagen final utilizada por Azure Container Apps es:
+
+\begin{verbatim}
+ghcr.io/subsonic-grupo4/l4g1/subsonic-festival:practica04
+\end{verbatim}
+
+Su finalidad es contener la aplicaci\'on completa SubSonic Festival, incluyendo back-end FastAPI y recursos est\'aticos del front-end.
 
 \subsection{Contenido principal del Dockerfile}
 
@@ -164,99 +173,85 @@ Esta prueba comprueba el acceso p\'ublico a eventos, el login de Cliente y Prove
 
 \subsection{Servicio cloud elegido}
 
-Para el despliegue cloud se propone utilizar:
+Para el despliegue cloud se ha utilizado:
 
 \begin{itemize}
-  \item Azure Container Registry, para almacenar la imagen Docker construida.
-  \item Azure Container Apps, para ejecutar la aplicaci\'on y obtener una URL p\'ublica.
+  \item GitHub Container Registry, para almacenar la imagen Docker construida autom\'aticamente desde GitHub Actions.
+  \item Azure Container Apps, para ejecutar la aplicaci\'on en Azure y obtener una URL p\'ublica.
 \end{itemize}
 
-Esta opci\'on permite desplegar una aplicaci\'on basada en contenedores sin tener que administrar manualmente una m\'aquina virtual.
+Esta opci\'on permite desplegar una aplicaci\'on basada en contenedores sin tener que administrar manualmente una m\'aquina virtual. Durante el proceso se intent\'o utilizar Azure Container Registry, pero la suscripci\'on de Azure for Students bloque\'o la creaci\'on de dicho recurso mediante una pol\'itica de regiones/recursos. Por ello, se opt\'o por publicar la imagen en GitHub Container Registry y desplegarla posteriormente en Azure Container Apps como imagen de registro externo.
 
 \subsection{Flujo de despliegue}
 
 El flujo seguido para publicar la aplicaci\'on es:
 
 \begin{enumerate}
-  \item Iniciar sesi\'on en Azure.
-  \item Crear un grupo de recursos.
-  \item Crear un Azure Container Registry.
-  \item Construir y etiquetar la imagen Docker.
-  \item Subir la imagen al registro.
-  \item Crear un entorno de Azure Container Apps.
-  \item Crear la aplicaci\'on a partir de la imagen subida.
-  \item Obtener la URL p\'ublica de la aplicaci\'on.
+  \item Crear la rama \texttt{practica04-docker-azure} para aislar los cambios de la pr\'actica.
+  \item A\~nadir el \texttt{Dockerfile}, el \texttt{.dockerignore} y la documentaci\'on asociada.
+  \item A\~nadir el workflow \texttt{.github/workflows/docker-ghcr.yml}.
+  \item Ejecutar GitHub Actions para construir la imagen Docker.
+  \item Publicar la imagen en GitHub Container Registry.
+  \item Crear una Azure Container App desde el portal de Azure.
+  \item Configurar la Container App para leer la imagen desde \texttt{ghcr.io}.
+  \item Activar la entrada externa HTTP en el puerto 8000.
+  \item Obtener la URL p\'ublica de la aplicaci\'on desplegada.
 \end{enumerate}
 
-Los comandos completos se encuentran en el archivo:
+Como apoyo, tambi\'en se conserva una plantilla de despliegue mediante Azure Container Registry en:
 
 \begin{verbatim}
 Docker/azure-deploy-template.ps1
 \end{verbatim}
 
-\subsection{Comandos principales de Azure}
+\subsection{Publicaci\'on de la imagen con GitHub Actions}
 
-Los comandos base para el despliegue son los siguientes. El nombre del registro \texttt{subsonicacr12345} debe cambiarse por uno \'unico, ya que Azure exige que los nombres de los registros sean globalmente \'unicos.
+La imagen Docker se construye y publica mediante el workflow:
 
 \begin{verbatim}
-az login
-
-az group create --name subsonic-rg --location westeurope
-
-az acr create --resource-group subsonic-rg `
-  --name subsonicacr12345 `
-  --sku Basic `
-  --admin-enabled true
-
-az acr login --name subsonicacr12345
-
-docker build -f Docker/Dockerfile -t subsonic-festival:practica04 .
-
-docker tag subsonic-festival:practica04 `
-  subsonicacr12345.azurecr.io/subsonic-festival:practica04
-
-docker push subsonicacr12345.azurecr.io/subsonic-festival:practica04
-
-az extension add --name containerapp --upgrade
-
-az provider register --namespace Microsoft.App
-az provider register --namespace Microsoft.OperationalInsights
-
-az containerapp env create `
-  --name subsonic-env `
-  --resource-group subsonic-rg `
-  --location westeurope
-
-$ACR_USER = az acr credential show `
-  --name subsonicacr12345 `
-  --query username `
-  -o tsv
-
-$ACR_PASS = az acr credential show `
-  --name subsonicacr12345 `
-  --query "passwords[0].value" `
-  -o tsv
-
-az containerapp create `
-  --name subsonic-app `
-  --resource-group subsonic-rg `
-  --environment subsonic-env `
-  --image subsonicacr12345.azurecr.io/subsonic-festival:practica04 `
-  --target-port 8000 `
-  --ingress external `
-  --registry-server subsonicacr12345.azurecr.io `
-  --registry-username $ACR_USER `
-  --registry-password $ACR_PASS
+.github/workflows/docker-ghcr.yml
 \end{verbatim}
+
+El workflow se ejecuta al subir cambios a la rama \texttt{practica04-docker-azure} y realiza los siguientes pasos:
+
+\begin{enumerate}
+  \item Descarga el repositorio.
+  \item Inicia sesi\'on en GitHub Container Registry usando \texttt{GITHUB\_TOKEN}.
+  \item Construye la imagen usando \texttt{Docker/Dockerfile}.
+  \item Publica la imagen con la etiqueta \texttt{practica04}.
+\end{enumerate}
+
+El resultado de GitHub Actions fue correcto, quedando publicada la imagen:
+
+\begin{verbatim}
+ghcr.io/subsonic-grupo4/l4g1/subsonic-festival:practica04
+\end{verbatim}
+
+\subsection{Configuraci\'on realizada en Azure Portal}
+
+En Azure Portal se cre\'o una aplicaci\'on de tipo Azure Container App con la siguiente configuraci\'on:
+
+\begin{itemize}
+  \item Grupo de recursos: \texttt{l4g1-subsonic-rg}.
+  \item Nombre de la aplicaci\'on: \texttt{subsonic-app}.
+  \item Regi\'on: Spain Central.
+  \item Origen de imagen: Docker Hub u otros registros.
+  \item Servidor de registro: \texttt{ghcr.io}.
+  \item Imagen: \texttt{ghcr.io/subsonic-grupo4/l4g1/subsonic-festival:practica04}.
+  \item Tipo de imagen: privada, usando un token de GitHub con permiso de lectura de paquetes.
+  \item Entrada externa: habilitada.
+  \item Tipo de entrada: HTTP.
+  \item Puerto de destino: 8000.
+\end{itemize}
 
 \subsection{URL final de despliegue}
 
-Tras crear la aplicaci\'on en Azure, la URL p\'ublica se obtiene con:
+Tras crear la aplicaci\'on en Azure, la URL p\'ublica se puede consultar desde el portal o mediante:
 
 \begin{verbatim}
 az containerapp show `
   --name subsonic-app `
-  --resource-group subsonic-rg `
+  --resource-group l4g1-subsonic-rg `
   --query properties.configuration.ingress.fqdn `
   -o tsv
 \end{verbatim}
@@ -281,6 +276,10 @@ Durante la preparaci\'on de esta entrega se han realizado las siguientes comprob
   \item Arranque del contenedor en localhost.
   \item Comprobaci\'on de rutas web y API principales.
   \item Ejecuci\'on de \texttt{smoke\_test.py} dentro del contenedor.
+  \item Ejecuci\'on correcta del workflow de GitHub Actions.
+  \item Publicaci\'on de la imagen en GitHub Container Registry.
+  \item Despliegue correcto de la aplicaci\'on en Azure Container Apps.
+  \item Comprobaci\'on de la URL p\'ublica final en navegador.
 \end{itemize}
 
 El resultado de la prueba autom\'atica ha sido:
@@ -293,17 +292,17 @@ SMOKE TEST OK
 
 El repositorio debe contener la carpeta \texttt{Docker} y el resto de archivos necesarios para construir la imagen. Adem\'as, seg\'un el enunciado de la pr\'actica, el nombre del repositorio debe seguir la nomenclatura del grupo indicada por la asignatura y se debe invitar al profesor al repositorio de GitHub.
 
-La entrega final debe incluir este informe en formato PDF y el enlace al repositorio donde est\'en subidos los archivos de Docker.
+La entrega final debe incluir este informe en formato PDF, el enlace al repositorio donde est\'en subidos los archivos de Docker y la URL p\'ublica de la aplicaci\'on desplegada en Azure.
 
 \section{Anexo: actas de reuni\'on}
 
 \subsection*{Acta 1}
 
-\textbf{Fecha y hora:} 23 de abril de 2026, 15:30.
+\textbf{Fecha y hora:} 17 de abril de 2026, en clase.
 
 \textbf{Asistentes:} Dar\'io Mateos Mart\'in, Nicol\'as Benito Benito, Gonzalo Naranjo Carretero, Junior Mart\'inez N\'u\~nez y Samantha Casta\~neda Godinez.
 
-\textbf{Contenido:} Revisi\'on del enunciado de la Pr\'actica 04 y an\'alisis de los requisitos de contenedores, Dockerfile, Azure e informe de entrega.
+\textbf{Contenido:} Revisi\'on en clase del enunciado de la Pr\'actica 04 y an\'alisis de los requisitos de contenedores, Dockerfile, Azure e informe de entrega.
 
 \textbf{Decisiones:} Dockerizar la aplicaci\'on en un \'unico contenedor, ya que FastAPI sirve tanto el back-end como los recursos del front-end.
 
@@ -321,9 +320,9 @@ La entrega final debe incluir este informe en formato PDF y el enlace al reposit
 
 \textbf{Fecha y hora:} 27 de abril de 2026, 15:30.
 
-\textbf{Asistentes:} Dar\'io Mateos Mart\'in, Nicol\'as Benito Benito, Gonzalo Naranjo Carretero, Junior Mart\'inez N\'u\~nez y Samantha Casta\~neda Godinez.
+\textbf{Asistentes:} Nicol\'as Benito Benito.
 
-\textbf{Contenido:} Revisi\'on del proceso de despliegue en Azure, comprobaci\'on de comandos y cierre de la documentaci\'on de entrega.
+\textbf{Contenido:} Revisi\'on del proceso de despliegue en Azure, comprobaci\'on de GitHub Actions, publicaci\'on de la imagen Docker en GitHub Container Registry y cierre de la documentaci\'on de entrega.
 
 \textbf{Decisiones:} Designar a Nicol\'as Benito Benito como miembro encargado de realizar la entrega final de la pr\'actica y de invitar al profesor al repositorio de GitHub.
 
