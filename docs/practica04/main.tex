@@ -1,0 +1,322 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\setlist[itemize]{leftmargin=1.4em}
+\setlist[enumerate]{leftmargin=1.6em}
+
+\title{\textbf{Pr\'actica 04 - SubSonic Festival}\\Dockerizaci\'on y despliegue en Azure}
+\author{Programaci\'on en Internet 2025/26}
+\date{Abril de 2026}
+
+\begin{document}
+
+\maketitle
+
+\textbf{Integrantes del grupo}
+
+\begin{itemize}
+  \item Dar\'io Mateos Mart\'in
+  \item Nicol\'as Benito Benito
+  \item Manuel Cordero Jaramillo
+  \item Gonzalo Naranjo Carretero
+  \item Samantha Casta\~neda Godinez
+  \item Junior Mart\'inez N\'u\~nez
+\end{itemize}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introducci\'on}
+
+El presente informe recoge el trabajo realizado para la Pr\'actica 04 del caso de estudio SubSonic Festival. Tras haber desarrollado previamente el front-end y el back-end de la aplicaci\'on, esta entrega se centra en preparar el proyecto para su ejecuci\'on mediante contenedores Docker y para su posterior despliegue en un proveedor cloud, concretamente Microsoft Azure.
+
+La aplicaci\'on parte de un proyecto web con front-end en HTML, CSS y JavaScript puro, y back-end en Python con FastAPI. En la versi\'on actual, FastAPI sirve tanto la API REST como los recursos est\'aticos del front-end, por lo que el sistema se puede empaquetar en un \'unico contenedor Docker sin introducir frameworks nuevos ni modificar la arquitectura funcional del proyecto.
+
+El objetivo de esta pr\'actica es que el profesor pueda clonar el repositorio, construir la imagen Docker sin errores, ejecutar la aplicaci\'on en localhost y, posteriormente, desplegarla en Azure siguiendo una gu\'ia reproducible.
+
+\section{Estado de partida del proyecto}
+
+Antes de realizar la dockerizaci\'on, el proyecto SubSonic Festival ya inclu\'ia:
+
+\begin{itemize}
+  \item Back-end en Python con FastAPI.
+  \item Front-end en HTML, CSS y JavaScript puro.
+  \item Persistencia local mediante archivos JSON.
+  \item Arquitectura organizada en controller, model, DAO, DTO y factory.
+  \item Funcionalidades de Cliente, Proveedor y Visitante integradas con el back-end.
+  \item Autenticaci\'on mediante token de sesi\'on tipo bearer para las rutas protegidas.
+  \item Prueba autom\'atica general mediante el archivo \texttt{smoke\_test.py}.
+\end{itemize}
+
+La dockerizaci\'on se ha realizado respetando esta estructura, sin reescribir el proyecto desde cero y sin separar el front-end en otro servidor.
+
+\section{Gu\'ia del proceso}
+
+\subsection{Estructura Docker incorporada al repositorio}
+
+Siguiendo el enunciado de la pr\'actica, se ha a\~nadido al repositorio una carpeta denominada \texttt{Docker}. Esta carpeta contiene los archivos necesarios para construir y preparar el despliegue de la aplicaci\'on:
+
+\begin{itemize}
+  \item \texttt{Docker/Dockerfile}: define la imagen Docker de la aplicaci\'on.
+  \item \texttt{Docker/README.md}: resume los comandos de construcci\'on, ejecuci\'on y prueba local.
+  \item \texttt{Docker/azure-deploy-template.ps1}: incluye una plantilla de comandos para desplegar la imagen en Azure.
+\end{itemize}
+
+Adem\'as, se ha a\~nadido un archivo \texttt{.dockerignore} en la ra\'iz del proyecto. Su finalidad es evitar que se copien al contenedor archivos innecesarios como \texttt{.git}, \texttt{.venv}, documentaci\'on generada, archivos temporales o dependencias locales.
+
+\subsection{Imagen externa utilizada}
+
+La imagen base utilizada en el Dockerfile es:
+
+\begin{verbatim}
+python:3.11-slim
+\end{verbatim}
+
+Esta imagen procede de Docker Hub y se utiliza como base ligera para ejecutar aplicaciones Python. Sobre ella se instalan las dependencias definidas en \texttt{requirements.txt} y se copia el c\'odigo necesario para ejecutar SubSonic Festival.
+
+La finalidad de esta imagen externa es proporcionar un entorno Python estable y reproducible sin depender de la configuraci\'on concreta del ordenador del desarrollador.
+
+\subsection{Contenido principal del Dockerfile}
+
+El Dockerfile realiza las siguientes acciones:
+
+\begin{enumerate}
+  \item Usa \texttt{python:3.11-slim} como imagen base.
+  \item Define \texttt{/app} como directorio de trabajo.
+  \item Copia \texttt{requirements.txt}.
+  \item Instala las dependencias del back-end.
+  \item Copia las carpetas necesarias del proyecto: \texttt{backend}, \texttt{pages}, \texttt{js} y \texttt{css}.
+  \item Copia \texttt{smoke\_test.py} para permitir la validaci\'on dentro del contenedor.
+  \item Expone el puerto 8000.
+  \item Arranca la aplicaci\'on con Uvicorn escuchando en \texttt{0.0.0.0}.
+\end{enumerate}
+
+El comando de arranque usado dentro del contenedor es:
+
+\begin{verbatim}
+python -m uvicorn backend.controller.controller:app --host 0.0.0.0 --port 8000
+\end{verbatim}
+
+Se utiliza \texttt{0.0.0.0} porque dentro de Docker la aplicaci\'on debe aceptar conexiones desde fuera del contenedor.
+
+\subsection{Construcci\'on de la imagen Docker}
+
+Desde la ra\'iz del repositorio, la imagen se construye con el comando:
+
+\begin{verbatim}
+docker build -f Docker/Dockerfile -t subsonic-festival:practica04 .
+\end{verbatim}
+
+Este comando utiliza el archivo \texttt{Docker/Dockerfile}, instala las dependencias de Python y prepara el contenedor para ejecutar la aplicaci\'on completa.
+
+\subsection{Prueba local del contenedor}
+
+Antes de desplegar en Azure, se comprueba el funcionamiento del contenedor en local mediante:
+
+\begin{verbatim}
+docker run --rm -p 8000:8000 subsonic-festival:practica04
+\end{verbatim}
+
+Una vez arrancado, se verifican las siguientes rutas:
+
+\begin{itemize}
+  \item \url{http://127.0.0.1:8000/pages/visitante.html}
+  \item \url{http://127.0.0.1:8000/pages/login.html}
+  \item \url{http://127.0.0.1:8000/docs}
+  \item \url{http://127.0.0.1:8000/events}
+\end{itemize}
+
+La prueba local confirma que el contenedor sirve correctamente las p\'aginas del front-end, la documentaci\'on Swagger de FastAPI y los end-points principales de la API.
+
+\subsection{Prueba autom\'atica dentro del contenedor}
+
+Tambi\'en se valida la imagen ejecutando el test general del proyecto dentro del propio contenedor:
+
+\begin{verbatim}
+docker run --rm subsonic-festival:practica04 python smoke_test.py
+\end{verbatim}
+
+El resultado esperado es:
+
+\begin{verbatim}
+SMOKE TEST OK
+\end{verbatim}
+
+Esta prueba comprueba el acceso p\'ublico a eventos, el login de Cliente y Proveedor, las rutas protegidas, el control por rol y el funcionamiento b\'asico de la API.
+
+\section{Despliegue en Microsoft Azure}
+
+\subsection{Servicio cloud elegido}
+
+Para el despliegue cloud se propone utilizar:
+
+\begin{itemize}
+  \item Azure Container Registry, para almacenar la imagen Docker construida.
+  \item Azure Container Apps, para ejecutar la aplicaci\'on y obtener una URL p\'ublica.
+\end{itemize}
+
+Esta opci\'on permite desplegar una aplicaci\'on basada en contenedores sin tener que administrar manualmente una m\'aquina virtual.
+
+\subsection{Flujo de despliegue}
+
+El flujo seguido para publicar la aplicaci\'on es:
+
+\begin{enumerate}
+  \item Iniciar sesi\'on en Azure.
+  \item Crear un grupo de recursos.
+  \item Crear un Azure Container Registry.
+  \item Construir y etiquetar la imagen Docker.
+  \item Subir la imagen al registro.
+  \item Crear un entorno de Azure Container Apps.
+  \item Crear la aplicaci\'on a partir de la imagen subida.
+  \item Obtener la URL p\'ublica de la aplicaci\'on.
+\end{enumerate}
+
+Los comandos completos se encuentran en el archivo:
+
+\begin{verbatim}
+Docker/azure-deploy-template.ps1
+\end{verbatim}
+
+\subsection{Comandos principales de Azure}
+
+Los comandos base para el despliegue son los siguientes. El nombre del registro \texttt{subsonicacr12345} debe cambiarse por uno \'unico, ya que Azure exige que los nombres de los registros sean globalmente \'unicos.
+
+\begin{verbatim}
+az login
+
+az group create --name subsonic-rg --location westeurope
+
+az acr create --resource-group subsonic-rg `
+  --name subsonicacr12345 `
+  --sku Basic `
+  --admin-enabled true
+
+az acr login --name subsonicacr12345
+
+docker build -f Docker/Dockerfile -t subsonic-festival:practica04 .
+
+docker tag subsonic-festival:practica04 `
+  subsonicacr12345.azurecr.io/subsonic-festival:practica04
+
+docker push subsonicacr12345.azurecr.io/subsonic-festival:practica04
+
+az extension add --name containerapp --upgrade
+
+az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.OperationalInsights
+
+az containerapp env create `
+  --name subsonic-env `
+  --resource-group subsonic-rg `
+  --location westeurope
+
+$ACR_USER = az acr credential show `
+  --name subsonicacr12345 `
+  --query username `
+  -o tsv
+
+$ACR_PASS = az acr credential show `
+  --name subsonicacr12345 `
+  --query "passwords[0].value" `
+  -o tsv
+
+az containerapp create `
+  --name subsonic-app `
+  --resource-group subsonic-rg `
+  --environment subsonic-env `
+  --image subsonicacr12345.azurecr.io/subsonic-festival:practica04 `
+  --target-port 8000 `
+  --ingress external `
+  --registry-server subsonicacr12345.azurecr.io `
+  --registry-username $ACR_USER `
+  --registry-password $ACR_PASS
+\end{verbatim}
+
+\subsection{URL final de despliegue}
+
+Tras crear la aplicaci\'on en Azure, la URL p\'ublica se obtiene con:
+
+\begin{verbatim}
+az containerapp show `
+  --name subsonic-app `
+  --resource-group subsonic-rg `
+  --query properties.configuration.ingress.fqdn `
+  -o tsv
+\end{verbatim}
+
+\textbf{URL final de la aplicaci\'on desplegada:} [Completar tras el despliegue en Azure]
+
+\section{Comprobaciones realizadas}
+
+Durante la preparaci\'on de esta entrega se han realizado las siguientes comprobaciones:
+
+\begin{itemize}
+  \item Ejecuci\'on del test general del proyecto en local.
+  \item Construcci\'on correcta de la imagen Docker.
+  \item Arranque del contenedor en localhost.
+  \item Comprobaci\'on de rutas web y API principales.
+  \item Ejecuci\'on de \texttt{smoke\_test.py} dentro del contenedor.
+\end{itemize}
+
+El resultado de la prueba autom\'atica ha sido:
+
+\begin{verbatim}
+SMOKE TEST OK
+\end{verbatim}
+
+\section{Notas para la entrega}
+
+El repositorio debe contener la carpeta \texttt{Docker} y el resto de archivos necesarios para construir la imagen. Adem\'as, seg\'un el enunciado de la pr\'actica, el nombre del repositorio debe seguir la nomenclatura del grupo indicada por la asignatura y se debe invitar al profesor al repositorio de GitHub.
+
+La entrega final debe incluir este informe en formato PDF y el enlace al repositorio donde est\'en subidos los archivos de Docker.
+
+\section{Anexo: actas de reuni\'on}
+
+\subsection*{Acta 1}
+
+\textbf{Fecha y hora:} 23 de abril de 2026, 15:30.
+
+\textbf{Asistentes:} Dar\'io Mateos Mart\'in, Nicol\'as Benito Benito, Gonzalo Naranjo Carretero, Junior Mart\'inez N\'u\~nez y Samantha Casta\~neda Godinez.
+
+\textbf{Contenido:} Revisi\'on del enunciado de la Pr\'actica 04 y an\'alisis de los requisitos de contenedores, Dockerfile, Azure e informe de entrega.
+
+\textbf{Decisiones:} Dockerizar la aplicaci\'on en un \'unico contenedor, ya que FastAPI sirve tanto el back-end como los recursos del front-end.
+
+\subsection*{Acta 2}
+
+\textbf{Fecha y hora:} 24 de abril de 2026, 12:00.
+
+\textbf{Asistentes:} Nicol\'as Benito Benito.
+
+\textbf{Contenido:} Preparaci\'on de la carpeta \texttt{Docker}, creaci\'on del \texttt{Dockerfile}, definici\'on del \texttt{.dockerignore} y validaci\'on local de la imagen.
+
+\textbf{Decisiones:} Utilizar la imagen base \texttt{python:3.11-slim}, exponer el puerto 8000 y ejecutar la aplicaci\'on mediante Uvicorn.
+
+\subsection*{Acta 3}
+
+\textbf{Fecha y hora:} 27 de abril de 2026, 15:30.
+
+\textbf{Asistentes:} Dar\'io Mateos Mart\'in, Nicol\'as Benito Benito, Gonzalo Naranjo Carretero, Junior Mart\'inez N\'u\~nez y Samantha Casta\~neda Godinez.
+
+\textbf{Contenido:} Revisi\'on del proceso de despliegue en Azure, comprobaci\'on de comandos y cierre de la documentaci\'on de entrega.
+
+\textbf{Decisiones:} Designar a Nicol\'as Benito Benito como miembro encargado de realizar la entrega final de la pr\'actica y de invitar al profesor al repositorio de GitHub.
+
+\end{document}
